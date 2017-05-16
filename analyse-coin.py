@@ -4,6 +4,7 @@ import numpy as np
 import json
 #import seaborn
 
+import datetime
 import talib
 import scipy.stats
 
@@ -20,7 +21,7 @@ def get_price(coin_name):
     url = "https://graphs.coinmarketcap.com/currencies/{}".format(coin_name)
     body = requests.get(url).text
     struct = json.loads(body)
-    price_series = np.array([i[1] for i in struct['price_usd']])
+    price_series = pd.DataFrame([{'price': i[1], 'date': datetime.datetime.fromtimestamp(i[0]/1000)} for i in struct['price_usd']])
     return price_series
 
 def compute_all():
