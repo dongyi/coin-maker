@@ -15,7 +15,7 @@ from itertools import combinations
 def get_coin_list(limit=20):
     url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
     struct = json.loads(requests.get(url).text)
-    coin_list = [i['tokens'][0] for i in struct[:20]]
+    coin_list = [i['slug'] for i in struct[:20]]
     return coin_list
 
 @lru_cache(2**32)
@@ -36,7 +36,6 @@ def compute_all():
         price_a = get_price(combine[0]).set_index('date').resample('1d').mean()
         price_b = get_price(combine[1]).set_index('date').resample('1d').mean()
         merged_df = pd.concat([price_a, price_b], axis=1).dropna()
-        print(merged_df)
         merged_df.columns = ['price_a', 'price_b']
         coefficient, p = scipy.stats.pearsonr(merged_df['price_a'], merged_df['price_b'])
         df.loc[combine[0], combine[1]] = coefficient
