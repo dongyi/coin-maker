@@ -9,6 +9,8 @@ import talib
 import scipy.stats
 
 from functools import lru_cache
+from itertools import combinations
+
 
 def get_coin_list(limit=20):
     url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
@@ -28,15 +30,20 @@ def compute_all():
     dimension = 20
     coin_list = get_coin_list(dimension)
     df = pd.DataFrame(index=coin_list, columns=coin_list)
-    for idx_i in range(dimension):
-        for idx_j in range(idx_i, dimension):
-            coin_a = coin_list[idx_i]
-            coin_b = coin_list[idx_j]
-            
-            coefficient, p = scipy.stats.pearsonr(get_price(coin_a), get_price(coin_b))
-            print(coefficient, coin_a, coin_b)
-            #df.iloc[idx_i, idx_j] = coefficient
-    #df.to_csv('analyse.csv')
+
+    combine_list = combinations(coin_list, 2)
+    for combine in combine_list:
+        print("compute {}".formate(combine))
+        price_a = get_price(combine[0]).set_index('date')
+        price_b = get_price(combine[1]).set_index('date')
+        merged_df = pd.concat([price_a, price_b], axis=1).dropna()
+        merged_df.columns = ['price_a', 'price_b']
+        coefficient, p = scipy.stats.pearsonr(merged_df['price_a'], merged_df['price_b'])
+        df.loc[combine[0], combine[1]] = coefficient
+        df.loc[combine[1], combine[0]] = coefficient
+        print(coefficient, p)
+
+    df.to_csv('analyse.csv')
     # plot in notebook
     #seaborn.heatmap(df)
 
