@@ -32,7 +32,7 @@ def compute_all():
     df = pd.DataFrame(index=coin_list, columns=coin_list)
 
     for combine in combinations(coin_list, 2):
-        print("compute {}".formate(combine))
+        print("compute {}".format(combine))
         price_a = get_price(combine[0]).set_index('date')
         price_b = get_price(combine[1]).set_index('date')
         merged_df = pd.concat([price_a, price_b], axis=1).dropna()
