@@ -32,8 +32,8 @@ def compute_all():
             coin_b = coin_list[idx_j]
             
             coefficient, p = scipy.stats.pearsonr(get_price(coin_a), get_price(coin_b))
-            print(coefficient, coin_a, coin_b)
-            #df.iloc[idx_i, idx_j] = coefficient
+            #print(coefficient, coin_a, coin_b)
+            df.iloc[idx_i, idx_j] = coefficient
     df.to_csv('analyse.csv')
     # plot in notebook
     #seaborn.heatmap(df)
