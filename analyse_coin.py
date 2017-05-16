@@ -33,9 +33,10 @@ def compute_all():
 
     for combine in combinations(coin_list, 2):
         print("compute {}".format(combine))
-        price_a = get_price(combine[0]).set_index('date')
-        price_b = get_price(combine[1]).set_index('date')
+        price_a = get_price(combine[0]).set_index('date').resample('1d').mean()
+        price_b = get_price(combine[1]).set_index('date').resample('1d').mean()
         merged_df = pd.concat([price_a, price_b], axis=1).dropna()
+        print(merged_df)
         merged_df.columns = ['price_a', 'price_b']
         coefficient, p = scipy.stats.pearsonr(merged_df['price_a'], merged_df['price_b'])
         df.loc[combine[0], combine[1]] = coefficient
