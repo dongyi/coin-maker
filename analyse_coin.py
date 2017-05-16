@@ -16,6 +16,7 @@ def get_coin_list(limit=20):
     url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
     struct = json.loads(requests.get(url).text)
     coin_list = [i['slug'] for i in struct[:20]]
+    coin_list.append('firstblood')
     return coin_list
 
 @lru_cache(2**32)
@@ -42,7 +43,7 @@ def compute_all():
         df.loc[combine[1], combine[0]] = coefficient
         print(coefficient, p)
 
-    df.to_csv('analyse.csv')
+    df.to_csv('analyse_2.csv')
     # plot in notebook
     #seaborn.heatmap(df)
 
