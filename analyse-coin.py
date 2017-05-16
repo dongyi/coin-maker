@@ -31,8 +31,7 @@ def compute_all():
     coin_list = get_coin_list(dimension)
     df = pd.DataFrame(index=coin_list, columns=coin_list)
 
-    combine_list = combinations(coin_list, 2)
-    for combine in combine_list:
+    for combine in combinations(coin_list, 2):
         print("compute {}".formate(combine))
         price_a = get_price(combine[0]).set_index('date')
         price_b = get_price(combine[1]).set_index('date')
