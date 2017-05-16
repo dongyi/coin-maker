@@ -16,7 +16,7 @@ def get_coin_list(limit=20):
     return coin_list
 
 @lru_cache(2**32)
-def get_data(coin_name):
+def get_price(coin_name):
     url = "https://graphs.coinmarketcap.com/currencies/{}".format(coin_name)
     struct = json.loads(requests.get(url).text)
     price_series = np.array([i[1] for i in srtuct['price_usd']])
@@ -30,8 +30,10 @@ def compute_all():
         for idx_j in range(idx_i, dimension):
             coin_a = coin_list[idx_i]
             coin_b = coin_list[idx_j]
-            coefficient, p = scipy.stats.pearsonr(coin_a, coin_b)
-            df.iloc[idx_i, idx_j] = coefficient
+            
+            coefficient, p = scipy.stats.pearsonr(get_price(coin_a), get_price(coin_b))
+            print(coefficient, coin_a, coin_b)
+            #df.iloc[idx_i, idx_j] = coefficient
     df.to_csv('analyse.csv')
     # plot in notebook
     #seaborn.heatmap(df)
