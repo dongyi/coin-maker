@@ -3,3 +3,6 @@ user.*
 *.csv
 *.ipynb
 *.xml
+
+.idea/
+.ipynb_checkpoints/
