@@ -15,8 +15,7 @@ from itertools import combinations
 def get_coin_list(limit=20):
     url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
     struct = json.loads(requests.get(url).text)
-    coin_list = [i['slug'] for i in struct[:20]]
-    coin_list.append('firstblood')
+    coin_list = [i['slug'] for i in struct[:limit]]
     return coin_list
 
 @lru_cache(2**32)
@@ -29,13 +28,15 @@ def get_price(coin_name):
 
 def compute_all():
     dimension = 20
-    coin_list = get_coin_list(dimension)
+    #coin_list = get_coin_list(dimension)
+    coin_list = ['bitcoin', 'ethereum', 'ethereum-classic', 'golem-network-tokens', 'zcash',
+                 'bitshares', 'digixdao', 'siacoin', 'firstblood']
     df = pd.DataFrame(index=coin_list, columns=coin_list)
 
     for combine in combinations(coin_list, 2):
         print("compute {}".format(combine))
-        price_a = get_price(combine[0]).set_index('date').resample('1d').mean()
-        price_b = get_price(combine[1]).set_index('date').resample('1d').mean()
+        price_a = get_price(combine[0]).set_index('date').resample('1d').mean()[-60:].pct_change()
+        price_b = get_price(combine[1]).set_index('date').resample('1d').mean()[-60:].pct_change()
         merged_df = pd.concat([price_a, price_b], axis=1).dropna()
         merged_df.columns = ['price_a', 'price_b']
         coefficient, p = scipy.stats.pearsonr(merged_df['price_a'], merged_df['price_b'])
@@ -49,3 +50,5 @@ def compute_all():
 
 if __name__ == '__main__':
     compute_all()
+    #cl = get_coin_list(50)
+    #print(cl)

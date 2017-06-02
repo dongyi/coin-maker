@@ -114,6 +114,7 @@ class Client:
         data = resp.text
 
         if len(data):
+            print(data)
             return json.loads(data)
 
     def post(self, name, params=None):
