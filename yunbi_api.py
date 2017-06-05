@@ -114,6 +114,7 @@ class Client:
         data = resp.text
 
         if len(data):
+            print(data)
             return json.loads(data)
 
     def post(self, name, params=None):
@@ -175,6 +176,8 @@ class Auth:
 
 from user import ACCESS_KEY, SECRET_KEY
 
-client = Client(ACCESS_KEY, SECRET_KEY)
+if __name__ == '__main__':
+    
+    client = Client(ACCESS_KEY, SECRET_KEY)
 
-print(client.getHistory())
+    print(client.getHistory())
