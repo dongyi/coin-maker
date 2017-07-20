@@ -1,5 +1,5 @@
 import requests
-
+import pprint
 import json
 import time
 import hmac
@@ -51,7 +51,6 @@ class Client:
 
     def getHistory(self, market='ethcny'):
         result = self.get('k', {'market': market})
-        print(result)
 
     def getBalance(self):
         result = self.get('members', sigrequest=True)
@@ -76,16 +75,16 @@ class Client:
                                "id": order["id"], })
         return openorders
 
-    def getOrderBook(self, market='btscny'):
+    def getOrderBook(self, market='btscny', limit=20):
         orderbooks = self.get('order_book', {'market': market}, True)
         if orderbooks["asks"][0]["id"] == 202429485 and orderbooks["asks"][0]["price"] == "0.0326":  # just fix the bug
             orderbooks["asks"].pop(0)
         asks = []
-        for record in orderbooks["asks"]:
+        for record in orderbooks["asks"][:limit]:
             asks.append([float(record['price']), float(record['volume'])])
 
         bids = []
-        for record in orderbooks["bids"]:
+        for record in orderbooks["bids"][:limit]:
             bids.append([float(record['price']), float(record['volume'])])
         return {"bids": bids, "asks": asks}
 
@@ -114,13 +113,11 @@ class Client:
         data = resp.text
 
         if len(data):
-            print(data)
             return json.loads(data)
 
     def post(self, name, params=None):
         verb = "POST"
         path = self.get_api_path(name)
-        print(params)
         signature, data = self.auth.sign_params(verb, path, params)
         url = "%s%s" % (BASE_URL, path)
         data.update({"signature": signature})
@@ -180,4 +177,5 @@ if __name__ == '__main__':
     
     client = Client(ACCESS_KEY, SECRET_KEY)
 
-    print(client.getHistory())
+    #print(client.getHistory())
+    pprint.pprint(client.getOrderBook('1stcny', limit=10))
