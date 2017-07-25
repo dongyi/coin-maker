@@ -5,6 +5,8 @@ import time
 import hmac
 import hashlib
 
+from utils import retry_call
+
 BASE_URL = 'https://yunbi.com/'
 
 API_BASE_PATH = '/api/v2'
@@ -12,33 +14,29 @@ API_PATH_DICT = {
     # GET
     'members': '%s/members/me.json',
     'markets': '%s/markets.json',
-
     # market code required in url as {market}.json
     'tickers': '%s/tickers/%%s.json',
     # market required in url query string as '?market={market}'
     'orders': '%s/orders.json',
-
     # order id required in url query string as '?id={id}'
     'order': '%s/order.json',
-
     # market required in url query string as '?market={market}'
     'order_book': '%s/order_book.json',
-
     # market required in url query string as '?market={market}'
     'trades': '%s/trades.json',
-
     # market required in url query string as '?market={market}'
     'my_trades': '%s/trades/my.json',
-
     'k': '%s/k.json',
     # clear orders in all markets
     'clear': '%s/orders/clear.json',
-
     # delete a specific order
     'delete_order': '%s/order/delete.json',
-
     # TODO multi orders API
     'multi_orders': '%s/orders/multi.json',
+
+    'depth': '%s/depth'
+
+
 }
 
 
@@ -49,7 +47,7 @@ class Client:
         else:
             print("provide key please")
 
-    def getHistory(self, market='ethcny'):
+    def getHistory(self, market='1stcny'):
         result = self.get('k', {'market': market})
 
     def getBalance(self):
@@ -60,14 +58,14 @@ class Client:
             balance[record["currency"] + "_locked"] = float(record["locked"])
         return balance
 
-    def getTickers(self, market='btscny'):
+    def getTickers(self, market='1stcny'):
         ticker = self.get('tickers', {'market': market})["ticker"]
         result = {"vol": float(ticker["vol"]), "buy": float(ticker["buy"]),
                   "last": float(ticker["last"]),
                   "sell": float(ticker["sell"])}
         return result
 
-    def getOpenOrders(self, market='btscny'):
+    def getOpenOrders(self, market='1stcny'):
         orders = self.get('orders', {'market': market}, True)
         openorders = []
         for order in orders:
@@ -75,7 +73,7 @@ class Client:
                                "id": order["id"], })
         return openorders
 
-    def getOrderBook(self, market='btscny', limit=20):
+    def getOrderBook(self, market='1stcny', limit=20):
         orderbooks = self.get('order_book', {'market': market}, True)
         if orderbooks["asks"][0]["id"] == 202429485 and orderbooks["asks"][0]["price"] == "0.0326":  # just fix the bug
             orderbooks["asks"].pop(0)
@@ -86,9 +84,9 @@ class Client:
         bids = []
         for record in orderbooks["bids"][:limit]:
             bids.append([float(record['price']), float(record['volume'])])
-        return {"bids": bids, "asks": asks}
+        return {"bids": bids, "asks": asks[::-1]}
 
-    def getMyTradeList(self, market='btscny'):
+    def getMyTradeList(self, market='1stcny'):
         return self.get('trades', {'market': market}, True)
 
     def submitOrder(self, params):
@@ -98,6 +96,7 @@ class Client:
         path_pattern = API_PATH_DICT[name]
         return path_pattern % API_BASE_PATH
 
+    @retry_call(3)
     def get(self, name, params=None, sigrequest=False):
         verb = "GET"
         path = self.get_api_path(name)
@@ -177,5 +176,12 @@ if __name__ == '__main__':
     
     client = Client(ACCESS_KEY, SECRET_KEY)
 
-    #print(client.getHistory())
-    pprint.pprint(client.getOrderBook('1stcny', limit=10))
+    while True:
+
+        #print(client.getHistory())
+        print("===============================================")
+        pprint.pprint(client.getOrderBook('1stcny', limit=15))
+        #pprint.pprint(client.getTickers('1stcny'))
+        print("===============================================\n\n")
+
+        time.sleep(10)
