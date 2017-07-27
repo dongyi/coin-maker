@@ -175,13 +175,26 @@ from user import ACCESS_KEY, SECRET_KEY
 if __name__ == '__main__':
     
     client = Client(ACCESS_KEY, SECRET_KEY)
-
+    buy_order_count = 0
+    sell_order_count = 0
+    last = 0
     while True:
 
         #print(client.getHistory())
         print("===============================================")
-        pprint.pprint(client.getOrderBook('1stcny', limit=15))
-        #pprint.pprint(client.getTickers('1stcny'))
+        #pprint.pprint(client.getOrderBook('1stcny', limit=100))
+        tick = client.getTickers('1stcny')
+        print(tick)
+        if tick['last'] == last:
+            print("buy: {} sell:{}".format(buy_order_count, sell_order_count))
+            time.sleep(5)
+            continue
+        if tick['buy'] == tick['last']:
+            sell_order_count += 1
+        if tick['sell'] == tick['last']:
+            buy_order_count += 1
+        last = tick['last']
+        print("buy: {} sell:{}".format(buy_order_count, sell_order_count))
         print("===============================================\n\n")
 
         time.sleep(10)
