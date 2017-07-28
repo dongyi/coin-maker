@@ -179,10 +179,10 @@ if __name__ == '__main__':
     sell_order_count = 0
     last = 0
     while True:
-
-        #print(client.getHistory())
         print("===============================================")
-        #pprint.pprint(client.getOrderBook('1stcny', limit=100))
+        pprint.pprint(client.getOrderBook('1stcny', limit=10))
+        time.sleep(10)
+        continue
         tick = client.getTickers('1stcny')
         print(tick)
         if tick['last'] == last:
