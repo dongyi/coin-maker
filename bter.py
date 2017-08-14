@@ -13,8 +13,11 @@ interval = 10
 
 
 @retry_call(5)
-def get_match_record(pair):
+def get_match_record(pair, tid=0):
     url = "{}/api2/1/tradeHistory/{}".format(base_url, pair)
+
+    if tid > 0:
+        url += '/{}'.format(tid)
 
     res = json.loads(requests.get(url).text)
     return res['data']
@@ -44,6 +47,26 @@ def collect_trades(pair):
         current_trade_id = max([int(i['tradeID']) for i in new_trades])
 
         time.sleep(interval)
+
+
+def collect_trades_history(pair):
+    current_trade_id = 0
+    total_res = []
+
+    while True:
+        try:
+            new_trades = get_match_record(pair, current_trade_id)
+        except:
+            continue
+
+        latest_trades = [i for i in new_trades if int(i['tradeID']) > current_trade_id]
+
+        current_trade_id = min([int(i['tradeID']) for i in new_trades])
+        total_res.extend(latest_trades)
+        if len(total_res) > 100000:
+            break
+    return pd.DataFrame(total_res)
+
 
 
 def load_file(pair):
