@@ -75,8 +75,6 @@ class Client:
 
     def getOrderBook(self, market='1stcny', limit=20):
         orderbooks = self.get('order_book', {'market': market}, True)
-        if orderbooks["asks"][0]["id"] == 202429485 and orderbooks["asks"][0]["price"] == "0.0326":  # just fix the bug
-            orderbooks["asks"].pop(0)
         asks = []
         for record in orderbooks["asks"][:limit]:
             asks.append([float(record['price']), float(record['volume'])])
@@ -175,19 +173,21 @@ from user import ACCESS_KEY, SECRET_KEY
 if __name__ == '__main__':
     
     client = Client(ACCESS_KEY, SECRET_KEY)
-    buy_order_count = 0
-    sell_order_count = 0
+    buy_order_count = 289 
+    sell_order_count = 172
     last = 0
     while True:
         print("===============================================")
-        pprint.pprint(client.getOrderBook('1stcny', limit=10))
-        time.sleep(10)
-        continue
+        #pprint.pprint(client.getOrderBook('1stcny', limit=10))
+        
+        #time.sleep(10)
+        #continue
+        #k = client.getHistory('1stcny')
         tick = client.getTickers('1stcny')
         print(tick)
         if tick['last'] == last:
             print("buy: {} sell:{}".format(buy_order_count, sell_order_count))
-            time.sleep(5)
+            time.sleep(3)
             continue
         if tick['buy'] == tick['last']:
             sell_order_count += 1
@@ -197,4 +197,4 @@ if __name__ == '__main__':
         print("buy: {} sell:{}".format(buy_order_count, sell_order_count))
         print("===============================================\n\n")
 
-        time.sleep(10)
+        time.sleep(3)
