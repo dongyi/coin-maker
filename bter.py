@@ -4,7 +4,7 @@ import time
 import dateutil
 import pandas as pd
 import numpy as np
-
+import seaborn
 
 from utils import retry_call
 
@@ -46,3 +46,23 @@ def collect_trades(pair):
         time.sleep(interval)
 
 
+def load_file(pair):
+    """
+    {
+        tradeID: "23624916",
+        date: "2017-08-14 03:04:50",
+        type: "sell",
+        rate: 2062.1,
+        amount: 3.3089,
+        total: 6823.28269
+    },
+    :param pair: 
+    :return: 
+    """
+    file = 'trade-log-{}'.format(pair)
+    content = open(file, 'a').read()
+    record_list = [json.loads(i) for i in content.split('\n') if i.strip() != '']
+    df = pd.DataFrame(record_list)
+    df['pure'] = df['type'].apply(lambda x: 1 if x == 'buy' else -1) * df['total']
+    df['pure_sum'] = df['pure'].cumsum()
+    return df
