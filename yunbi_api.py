@@ -173,9 +173,10 @@ from user import ACCESS_KEY, SECRET_KEY
 if __name__ == '__main__':
     
     client = Client(ACCESS_KEY, SECRET_KEY)
-    buy_order_count = 289 
-    sell_order_count = 172
+    buy_order_count = 266 
+    sell_order_count = 379
     last = 0
+    
     while True:
         print("===============================================")
         #pprint.pprint(client.getOrderBook('1stcny', limit=10))
@@ -196,5 +197,7 @@ if __name__ == '__main__':
         last = tick['last']
         print("buy: {} sell:{}".format(buy_order_count, sell_order_count))
         print("===============================================\n\n")
-
+        with open('1st.log', 'a') as f:
+            txt = "{'buy': %d, 'sell':%d , 'last':%f, 'ts': %d}\n" % (buy_order_count, sell_order_count, last, int(time.time()))
+            f.write(txt)
         time.sleep(3)

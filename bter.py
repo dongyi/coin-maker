@@ -68,7 +68,6 @@ def collect_trades_history(pair):
     return pd.DataFrame(total_res)
 
 
-
 def load_file(pair):
     """
     {
