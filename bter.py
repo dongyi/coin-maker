@@ -82,9 +82,10 @@ def load_file(pair):
     :return: 
     """
     file = 'trade-log-{}'.format(pair)
-    content = open(file, 'a').read()
+    content = open(file, 'r').read()
     record_list = [json.loads(i) for i in content.split('\n') if i.strip() != '']
     df = pd.DataFrame(record_list)
     df['pure'] = df['type'].apply(lambda x: 1 if x == 'buy' else -1) * df['total']
     df['pure_sum'] = df['pure'].cumsum()
+    df.set_index('date', inplace=True)
     return df
