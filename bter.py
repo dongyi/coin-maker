@@ -89,3 +89,10 @@ def load_file(pair):
     df['pure_sum'] = df['pure'].cumsum()
     df.set_index('date', inplace=True)
     return df
+
+
+def auto_draw(pair):
+    import seaborn
+    df = load_file(pair)
+    df['rate'] = df['rate'].rolling(10).mean()
+    df[['rate', 'pure_sum']].apply(lambda x: (x - np.mean(x)) / (np.max(x) - np.min(x))).plot(figsize=(18, 7))
