@@ -173,8 +173,8 @@ from user import ACCESS_KEY, SECRET_KEY
 if __name__ == '__main__':
     
     client = Client(ACCESS_KEY, SECRET_KEY)
-    buy_order_count = 1 
-    sell_order_count = 1
+    buy_order_count = 0
+    sell_order_count = 0
     last = 0
     
     while True:
