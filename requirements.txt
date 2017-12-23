@@ -14,7 +14,7 @@ requests==2.18.4
 six==1.11.0
 twilio==6.6.3
 urllib3==1.22
-TA-Lib==0.4.10
 numpy==1.13.3
+TA-Lib==0.4.10
 pandas==0.20.3
-redis
+redis==2.10.6

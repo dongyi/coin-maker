@@ -1,7 +1,7 @@
 import json
 
 from lib.util import *
-from twilio.rest import Client
+#from twilio.rest import Client
 from ta.indicators import *
 
 from exchange.bittrex import Bittrex
@@ -14,9 +14,10 @@ with open("secrets.json") as secrets_file:
     my_bittrex = Bittrex(secrets['bittrex_key'], secrets['bittrex_secret'])
 
 # Setting up Twilio for SMS alerts
-account_sid = secrets['twilio_key']
-auth_token = secrets['twilio_secret']
-client = Client(account_sid, auth_token)
+
+#account_sid = secrets['twilio_key']
+#auth_token = secrets['twilio_secret']
+#client = Client(account_sid, auth_token)
 
 
 coin_pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-NEO']
