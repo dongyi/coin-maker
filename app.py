@@ -54,16 +54,15 @@ if __name__ == "__main__":
             else:
                 cny_cpx = cpx * current_btc_usd * cny_usd
 
+            macd_str = ','.join(pretty_macd_list(macd))
             macd_signal = ''
             if np.diff(np.array(macd)).min() > 0:
-                macd_signal += ' macd buy'
-                macd_signal = green(macd_signal)
+                macd_str = green(macd_str)
             if np.diff(np.array(macd)).max() < 0:
-                macd_signal += ' macd sell'
-                macd_signal = red(macd_signal)
+                macd_str = red(macd_str)
 
             print("{}: \t price: {}\t RSI: {}\tMACD: {}\t {} \t breakout: {}".format(
-                i, round(cny_cpx, 3), rsi, ','.join(pretty_macd_list(macd)), macd_signal, breakout))
+                i, round(cny_cpx, 3), rsi, macd_str, '', breakout))
         print("wait 60s\n\n")
 
 
