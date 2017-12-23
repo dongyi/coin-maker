@@ -89,4 +89,4 @@ def findBreakout(hist, period):
         #todo notify
         return "Breaking out!"
     else:
-        return "#Bagholding"
+        return "hold"

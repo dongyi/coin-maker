@@ -1,7 +1,7 @@
 import json
 
 from lib.util import *
-#from twilio.rest import Client
+# from twilio.rest import Client
 from ta.indicators import *
 
 from exchange.bittrex import Bittrex
@@ -15,13 +15,12 @@ with open("secrets.json") as secrets_file:
 
 # Setting up Twilio for SMS alerts
 
-#account_sid = secrets['twilio_key']
-#auth_token = secrets['twilio_secret']
-#client = Client(account_sid, auth_token)
+# account_sid = secrets['twilio_key']
+# auth_token = secrets['twilio_secret']
+# client = Client(account_sid, auth_token)
 
 
 coin_pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-NEO']
-
 
 if __name__ == "__main__":
 
@@ -35,34 +34,36 @@ if __name__ == "__main__":
         cny_usd = 6.56
 
         for i in coin_pairs:
-            closing_prices_5min = getClosingPrices(my_bittrex, i, 100, 'fiveMin')
-            closing_prices_30min = getClosingPrices(my_bittrex, i, 100, 'thirtyMin')
+            closing_prices_1min = getClosingPrices(my_bittrex, i, 100, 'oneMin')
+
             ohlc = my_bittrex.getHistoricalData(i, period=30, unit='fiveMin')
-            signal = 'breakout:' + findBreakout(ohlc, 30)
-            rsi = calculateRSI(np.array(closing_prices_30min))[-1]
+            breakout = findBreakout(ohlc, 30)
+            if breakout != 'hold':
+                breakout = red(breakout)
+            rsi = calculateRSI(np.array(closing_prices_1min))[-1]
             rsi = round(rsi, 3)
             if rsi <= 20:
                 rsi = green(rsi)
             if rsi >= 70:
                 rsi = red(rsi)
-            cpx = closing_prices_5min[-1]
-            macd = calcMACD(np.array(closing_prices_5min))
+            cpx = closing_prices_1min[-1]
+            macd = calcMACD(np.array(closing_prices_1min))
             if i == 'USDT-BTC':
                 cny_cpx = cpx
                 current_btc_usd = cpx
             else:
                 cny_cpx = cpx * current_btc_usd * cny_usd
 
-            signal += ''
+            macd_signal = ''
             if np.diff(np.array(macd)).min() > 0:
-                signal += ' macd buy'
-                signal = green(signal)
+                macd_signal += ' macd buy'
+                macd_signal = green(macd_signal)
             if np.diff(np.array(macd)).max() < 0:
-                signal += ' macd sell'
-                signal = red(signal)
+                macd_signal += ' macd sell'
+                macd_signal = red(macd_signal)
 
-            print("{}: \t price: {}\t RSI: {}\tMACD: {}\t {} \t ".format(
-                i, round(cny_cpx, 3), rsi, ','.join(pretty_macd_list(macd)), signal))
+            print("{}: \t price: {}\t RSI: {}\tMACD: {}\t {} \t breakout: {}".format(
+                i, round(cny_cpx, 3), rsi, ','.join(pretty_macd_list(macd)), macd_signal, breakout))
         print("wait 60s\n\n")
 
 
