@@ -44,7 +44,7 @@ if __name__ == "__main__":
             rsi = round(rsi, 3)
             if rsi <= 20:
                 rsi = green(rsi)
-            if rsi >= 70:
+            elif rsi >= 70:
                 rsi = red(rsi)
             cpx = closing_prices_1min[-1]
             macd = calcMACD(np.array(closing_prices_1min))
