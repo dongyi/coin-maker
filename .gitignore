@@ -5,3 +5,4 @@ user.*
 *.xml
 .idea/
 .ipynb_checkpoints/
+secret.json
