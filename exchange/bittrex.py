@@ -10,7 +10,7 @@ import time
 import hmac
 import hashlib
 
-from util import *
+from lib.util import *
 
 try:
     from urllib import urlencode
@@ -372,7 +372,6 @@ class Bittrex(object):
             params = {'currency': currency}
 
         return self.api_query('getdeposithistory', params)
-
 
 
 @retry_call(3)
