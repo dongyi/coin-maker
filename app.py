@@ -37,15 +37,16 @@ if __name__ == "__main__":
         for i in coin_pairs:
             closing_prices_5min = getClosingPrices(my_bittrex, i, 100, 'fiveMin')
             closing_prices_30min = getClosingPrices(my_bittrex, i, 100, 'thirtyMin')
-
-            signal = 'breakout:' + findBreakout(closing_prices_5min, 30)
-            rsi = calculateRSI(closing_prices_30min)
+            ohlc = my_bittrex.getHistoricalData(i, period=30, unit='fiveMin')
+            signal = 'breakout:' + findBreakout(ohlc, 30)
+            rsi = calculateRSI(np.array(closing_prices_30min))[-1]
+            rsi = round(rsi, 3)
             if rsi <= 20:
                 rsi = green(rsi)
             if rsi >= 70:
                 rsi = red(rsi)
             cpx = closing_prices_5min[-1]
-            macd = calcMACD(closing_prices_5min)
+            macd = calcMACD(np.array(closing_prices_5min))
             if i == 'USDT-BTC':
                 cny_cpx = cpx
                 current_btc_usd = cpx
@@ -59,8 +60,9 @@ if __name__ == "__main__":
             if np.diff(np.array(macd)).max() < 0:
                 signal += ' macd sell'
                 signal = red(signal)
+
             print("{}: \t price: {}\t RSI: {}\tMACD: {}\t {} \t ".format(
-                i, round(cny_cpx, 3), str(round(rsi, 3)), ','.join(pretty_macd_list(macd)), signal))
+                i, round(cny_cpx, 3), rsi, ','.join(pretty_macd_list(macd)), signal))
         print("wait 60s\n\n")
 
 
