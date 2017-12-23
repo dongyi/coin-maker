@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import numpy as np
 import json
-#import seaborn
+# import seaborn
 
 import datetime
 import talib
@@ -18,17 +18,20 @@ def get_coin_list(limit=20):
     coin_list = [i['slug'] for i in struct[:limit]]
     return coin_list
 
-@lru_cache(2**32)
+
+@lru_cache(2 ** 32)
 def get_price(coin_name):
     url = "https://graphs.coinmarketcap.com/currencies/{}".format(coin_name)
     body = requests.get(url).text
     struct = json.loads(body)
-    price_series = pd.DataFrame([{'price': i[1], 'date': datetime.datetime.fromtimestamp(i[0]/1000)} for i in struct['price_usd']])
+    price_series = pd.DataFrame(
+        [{'price': i[1], 'date': datetime.datetime.fromtimestamp(i[0] / 1000)} for i in struct['price_usd']])
     return price_series
+
 
 def compute_all():
     dimension = 20
-    #coin_list = get_coin_list(dimension)
+    # coin_list = get_coin_list(dimension)
     coin_list = ['bitcoin', 'ethereum', 'ethereum-classic', 'golem-network-tokens', 'zcash',
                  'bitshares', 'digixdao', 'siacoin', 'firstblood']
     df = pd.DataFrame(index=coin_list, columns=coin_list)
@@ -46,9 +49,10 @@ def compute_all():
 
     df.to_csv('analyse_2.csv')
     # plot in notebook
-    #seaborn.heatmap(df)
+    # seaborn.heatmap(df)
+
 
 if __name__ == '__main__':
     compute_all()
-    #cl = get_coin_list(50)
-    #print(cl)
+    # cl = get_coin_list(50)
+    # print(cl)
