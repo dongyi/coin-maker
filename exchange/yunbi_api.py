@@ -5,7 +5,7 @@ import time
 import hmac
 import hashlib
 
-from utils import retry_call
+from lib.utils import retry_call
 
 BASE_URL = 'https://yunbi.com/'
 

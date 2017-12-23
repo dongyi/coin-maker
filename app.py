@@ -1,16 +1,12 @@
 import json
-import time
+
 from lib.util import *
 from twilio.rest import Client
-
-import pandas as pd
-import numpy as np
-import talib
 from ta.indicators import *
 
-from functools import lru_cache
 from exchange.bittrex import Bittrex
 from exchange.bittrex import getClosingPrices
+
 # Creating an instance of the Bittrex class with our secrets.json file
 with open("secrets.json") as secrets_file:
     secrets = json.load(secrets_file)
