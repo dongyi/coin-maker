@@ -1,37 +1,40 @@
-# 数字货币量化交易
+# crypto quant
 
-## 使用方法
+## usage
 
-- 把交易所app_key, secret_key填写在secret.json里
+- fill your `app_key`, `secret_key` in `secrets.json`
 
 - `python app.py`
 
-## 交易所接口
+## exchange APIs
 
 - bittrex
-  主要使用的交易所
+
+  mostly trade on it
 
 - bter
-  一些公共接口
+
+  public history data
 
 - yunbi
-  交易所嗝屁了
+
+  it was shutdown
 
 
 
-## 技术分析
+## technical analyse
 
-- 大部分技术指标talib里都有
+- use api from talib
 
 
-## 接下来工作
+## following
 
-- 更多交易所接口
+- more exchange support
 
-- 分析成交记录, order_book
+- analyse on order_book, trade history
 
-- 通知
+- notify on signal
 
-- 自动下单交易
+- automatically trade
 
-- 历史数据分析, 包括btc的ohlc, 越多越好
+- BTC history ohlc analyse
