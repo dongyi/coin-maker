@@ -7,11 +7,6 @@ from ta.indicators import *
 from exchange.bittrex import Bittrex
 from exchange.bittrex import getClosingPrices
 
-# Creating an instance of the Bittrex class with our secrets.json file
-with open("secrets.json") as secrets_file:
-    secrets = json.load(secrets_file)
-    secrets_file.close()
-    my_bittrex = Bittrex(secrets["bittrex"]['bittrex_key'], secrets["bittrex"]['bittrex_secret'])
 
 # Setting up Twilio for SMS alerts
 
@@ -28,7 +23,8 @@ if __name__ == "__main__":
     print("\t\t\t bittrex indicator")
     print("===============================================================================")
 
-
+    my_bittrex = Bittrex(*load_api_key('bittrex'))
+    
     def get_signal():
         current_btc_usd = 0.0
         cny_usd = 6.56

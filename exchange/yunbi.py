@@ -1,11 +1,12 @@
 import requests
-import pprint
+
 import json
 import time
 import hmac
 import hashlib
 
 from lib.util import retry_call
+from lib.util import load_api_key
 
 BASE_URL = 'https://yunbi.com/'
 
@@ -167,12 +168,9 @@ class Auth:
 
         return signature, params
 
-
-from user import ACCESS_KEY, SECRET_KEY
-
 if __name__ == '__main__':
-    
-    client = Client(ACCESS_KEY, SECRET_KEY)
+    api_key, secret_key = load_api_key('yunbi')
+    client = Client(api_key, secret_key)
     buy_order_count = 0
     sell_order_count = 0
     last = 0

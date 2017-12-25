@@ -1,9 +1,9 @@
 import numpy as np
 import traceback
 import time
+import json
 
 from functools import wraps
-from functools import partial
 
 
 STYLE = {
@@ -85,3 +85,11 @@ def use_style(string, mode='', fore='', back=''):
 red = lambda x: use_style(x, fore='red')
 yellow = lambda x: use_style(x, fore='yellow')
 green = lambda x: use_style(x, fore='green')
+
+
+def load_api_key(exchange_name):
+    with open("secrets.json") as secrets_file:
+        secrets = json.load(secrets_file)
+        secrets_file.close()
+        apikey, secretkey = secrets[exchange_name]['api_key'], secrets[exchange_name]['secret_key']
+        return apikey, secretkey
