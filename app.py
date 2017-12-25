@@ -11,7 +11,7 @@ from exchange.bittrex import getClosingPrices
 with open("secrets.json") as secrets_file:
     secrets = json.load(secrets_file)
     secrets_file.close()
-    my_bittrex = Bittrex(secrets['bittrex_key'], secrets['bittrex_secret'])
+    my_bittrex = Bittrex(secrets["bittrex"]['bittrex_key'], secrets["bittrex"]['bittrex_secret'])
 
 # Setting up Twilio for SMS alerts
 

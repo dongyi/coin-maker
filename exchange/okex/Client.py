@@ -5,10 +5,14 @@
 
 from OkcoinSpotAPI import OKCoinSpot
 from OkcoinFutureAPI import OKCoinFuture
+import json
 
 # 初始化apikey，secretkey,url
-apikey = 'XXXX'
-secretkey = 'XXXXX'
+with open("secrets.json") as secrets_file:
+    secrets = json.load(secrets_file)
+    secrets_file.close()
+    apikey, secretkey = secrets["okex"]['apikey'], secrets["okex"]['secretkey']
+
 okcoinRESTURL = 'www.okex.com'  # 请求注意：国内账号需要 修改为 www.okcoin.cn
 
 # 现货API
