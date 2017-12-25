@@ -24,7 +24,7 @@ if __name__ == "__main__":
     print("===============================================================================")
 
     my_bittrex = Bittrex(*load_api_key('bittrex'))
-    
+
     def get_signal():
         current_btc_usd = 0.0
         cny_usd = 6.56
