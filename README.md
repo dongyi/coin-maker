@@ -28,15 +28,18 @@
 
 - bittrex
 
-  mostly trade on it
-
 - bter
-
-  public history data
 
 - yunbi
 
-  it was shutdown
+- okex
+
+- poloniex
+
+- hitbtc
+
+- bitstamp
+
 
 
 
