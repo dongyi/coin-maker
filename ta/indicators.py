@@ -90,3 +90,16 @@ def findBreakout(hist, period):
         return "Breaking out!"
     else:
         return "hold"
+
+
+def kdj(ohlc):
+    assert ohlc.shape[0] == 4
+    high = [i[1] for i in ohlc]
+    low = [i[2] for i in ohlc]
+    close = [i[3] for i in ohlc]
+    ks, ds = talib.STOCH(high, low, close)
+    js = 3 * ks - 2 * ds
+
+    k, d, j = ks[-1], ds[-1], js[-1]
+
+    return k, d, j
