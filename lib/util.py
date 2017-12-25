@@ -69,7 +69,7 @@ def pretty_macd_list(origin_list):
         return origin_list
     else:
         p = int(-np.log10(abs(origin_list[0])))
-        return [str(round(i * 10**(p), 2)) for i in origin_list]
+        return [str(round(i * 10 ** p, 2)) for i in origin_list]
 
 
 def use_style(string, mode='', fore='', back=''):

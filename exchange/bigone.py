@@ -121,7 +121,6 @@ class Auth:
             if key != "orders":
                 query = "%s&%s=%s" % (query, key, value) if len(query) else "%s=%s" % (key, value)
             else:
-
                 d = {key: params[key]}
                 for v in value:
                     ks = v.keys()

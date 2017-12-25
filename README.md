@@ -40,7 +40,7 @@
 
 - bitstamp
 
-
+- bigone
 
 
 ## technical analyse
