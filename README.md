@@ -70,3 +70,11 @@
 - automatically trade
 
 - BTC history ohlc analyse
+
+## donation
+
+- 比特币乞讨  (bitcoin address):
+ 
+ `3MbdGbkcN834o4WnoCa6QEDrDg72GSmZ72`
+ 
+ 
