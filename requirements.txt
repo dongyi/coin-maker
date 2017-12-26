@@ -18,3 +18,4 @@ numpy==1.13.3
 TA-Lib==0.4.10
 pandas==0.20.3
 redis==2.10.6
+click==6.7

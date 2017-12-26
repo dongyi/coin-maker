@@ -54,4 +54,6 @@ def runner(exchange, market):
 
 
 if __name__ == '__main__':
+    import sys
+    sys.path.append('../')
     runner('bittrex', '1ST-BTC')
