@@ -1,8 +1,7 @@
 import click
-import json
 
 from lib.util import *
-# from twilio.rest import Client
+
 from ta.indicators import *
 
 from exchange.bittrex import Bittrex
@@ -16,14 +15,11 @@ def cli():
     pass
 
 
-
 @click.command()
 @click.option('--market', prompt='market pair')
 @click.option('--exchange', prompt='exchange name')
 def collect_order(market, exchange):
     script.collect_orders.runner(exchange, market)
-
-
 
 
 @click.command()
@@ -74,7 +70,6 @@ def watch_indicator(exchange):
                 i, round(cny_cpx, 3), rsi, macd_str, '', breakout))
         print("wait 60s\n\n")
 
-
     while True:
         get_signal()
         time.sleep(60)
@@ -82,7 +77,6 @@ def watch_indicator(exchange):
 
 cli.add_command(collect_order)
 cli.add_command(watch_indicator)
-
 
 if __name__ == "__main__":
     cli()
