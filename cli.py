@@ -11,11 +11,17 @@ from exchange.bittrex import getClosingPrices
 import script.collect_orders
 
 
+@click.group()
+def cli():
+    pass
+
+
+
 @click.command()
 @click.option('--market', prompt='market pair')
 @click.option('--exchange', prompt='exchange name')
 def collect_order(market, exchange):
-    script.collect_orders.runner('bittrex', '1ST-BTC')
+    script.collect_orders.runner(exchange, market)
 
 
 
@@ -72,3 +78,11 @@ def watch_indicator(exchange):
     while True:
         get_signal()
         time.sleep(60)
+
+
+cli.add_command(collect_order)
+cli.add_command(watch_indicator)
+
+
+if __name__ == "__main__":
+    cli()

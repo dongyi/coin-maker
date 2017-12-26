@@ -27,7 +27,13 @@
 
 ```
 
-- `python app.py`
+- collect order history
+
+ `python cli.py collect_order --market [BTC-1ST] --exchange [bittrex]`
+
+- watch indicators
+
+ `python cli.py watch_indicator --exchange [bittrex]`
 
 ## exchange APIs
 

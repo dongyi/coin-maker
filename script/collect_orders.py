@@ -36,6 +36,7 @@ def collector(exchange, market):
     api_key, secret_key = load_api_key(exchange)
     bittrex = Bittrex(api_key, secret_key)
     order_slice = bittrex.get_market_history(market, 100)
+
     return order_slice
 
 
@@ -45,8 +46,10 @@ def runner(exchange, market):
     while True:
         slice = collector(exchange, market)
         slice_df = pd.DataFrame(slice['result'])
-        slice_df.drop_duplicate('Id', inplace=True)
-        df.append(slice)
+
+        df = df.append(slice_df)
+        df.drop_duplicates(subset=['Id'], keep='last', inplace=True)
+
         time.sleep(30)
         counter += 1
         if counter % 100 == 0:
