@@ -5,18 +5,23 @@
 - fill your exchange api keys in secrets.json
 
 ```
+
 {
   "bittrex": {
-    "bittrex_key": "xxx",
-    "bittrex_secret": "xxx",
+    "api_key": "xx",
+    "secret_key": "xx",
     "twilio_key": "TWILIO_API_KEY",
     "twilio_secret": "TWILIO_SECRET",
     "twilio_number": "TWILIO_PHONE_NUMBER",
-    "my_number": "xxx"
+    "my_number": "+86-18601643984"
   },
   "okex" : {
-    "apikey": "xxx",
-    "secretkey": "xxx"
+    "api_key": "xxx",
+    "secret_key": "xxx"
+  },
+  "bigone": {
+    "api_key": "xxx",
+    "secret_key": "xxx"
   }
 }
 
