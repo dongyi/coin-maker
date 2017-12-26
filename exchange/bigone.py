@@ -14,8 +14,25 @@ API_BASE_PATH = ''
 
 API_PATH_DICT = {
     # GET
+    'account': '/accounts',
+    'account_currency': '/accounts/{currency}',
+    'markets': '/markets/{symbol}',
+    'all_markets': '/markets',
+    'order_books': '/markets/{symbol}/book',
+    'trades': '/markets/{symbol}/trades',
+    'orders': '/orders{?market,limit}',
+    'order_by_id': '/orders/{id}',
+    'trades_list': '/trades{?market,limit,offset}',
+    'deposit': '/deposits{?currency,limit,offset}',
+    'withdraw_list': '/withdrawals{?currency,limit,offset}',
 
+    # POST
+    'order': '/orders',
+    'batch_cancel': '/orders/cancel',
+    'withdraws': '/withdrawals',
 
+    # DELETE
+    'delete_order': '/orders/{id}',
 }
 
 
