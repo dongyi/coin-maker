@@ -13,7 +13,7 @@
     "twilio_key": "TWILIO_API_KEY",
     "twilio_secret": "TWILIO_SECRET",
     "twilio_number": "TWILIO_PHONE_NUMBER",
-    "my_number": "+86-18601643984"
+    "my_number": "+86-11111111111"
   },
   "okex" : {
     "api_key": "xxx",
