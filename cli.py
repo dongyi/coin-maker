@@ -30,7 +30,7 @@ def watch_indicator(exchange):
     print("\t\t\t bittrex indicator")
     print("===============================================================================")
 
-    coin_pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-NEO']
+    coin_pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-SC']
 
     my_bittrex = Bittrex(*load_api_key('bittrex'))
 
@@ -75,7 +75,15 @@ def watch_indicator(exchange):
         time.sleep(60)
 
 
+@click.command()
+@click.option('--exchange', prompt='exchange name')
+def analyse_volatilty(exchange):
+    from script.analyse_volatility import get_volatility_df
+    get_volatility_df(exchange)
+
+
 cli.add_command(collect_order)
+cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
 
 if __name__ == "__main__":

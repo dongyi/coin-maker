@@ -138,6 +138,7 @@ class Bittrex(object):
     @retry_call(3)
     def getHistoricalData(self, market, period, unit):
         request_url = 'https://bittrex.com/Api/v2.0/pub/market/GetTicks?marketName=%s&tickInterval=%s' % (market, unit)
+
         historicalData = requests.get(request_url,
                                       headers={"apisign": hmac.new(self.api_secret.encode(), request_url.encode(),
                                                                    hashlib.sha512).hexdigest()}
