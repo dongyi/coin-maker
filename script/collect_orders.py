@@ -49,10 +49,10 @@ def runner(exchange, market):
 
         df = df.append(slice_df)
         df.drop_duplicates(subset=['Id'], keep='last', inplace=True)
-
-        time.sleep(30)
+        print("collected from {} to {}".format(min(df['Id'].tolist()), max(df['Id'].tolist())))
+        time.sleep(15)
         counter += 1
-        if counter % 100 == 0:
+        if counter % 10 == 0:
             df.to_csv('orders_{}_{}.csv'.format(exchange, market))
 
 
