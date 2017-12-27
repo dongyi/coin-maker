@@ -84,10 +84,24 @@ def analyse_volatilty(exchange):
     get_volatility_df(exchange)
 
 
+@click.command()
+@click.option('--address', prompt='which address you want check')
+def plot_ether_transactions(address):
+    from etherscan.accounts import Account
+    with open('etherscan_api_key.json', mode='r') as key_file:
+        key = json.loads(key_file.read())['key']
+
+    api = Account(address=address, api_key=key)
+    transactions = api.get_all_transactions(offset=10000, sort='asc', internal=True)
+
+    print(transactions[0])
+
+
 cli.add_command(collect_order)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
 cli.add_command(find_breakout)
+cli.add_command(plot_ether_transactions)
 
 
 if __name__ == "__main__":
