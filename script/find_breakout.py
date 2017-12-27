@@ -13,6 +13,8 @@ from lib.util import retry_call
 from lib.util import fail_silent
 from lib.util import fail_default
 
+from lib.util import red, green
+
 from exchange.bittrex import Bittrex
 
 
@@ -28,7 +30,7 @@ def find_breakout(p):
         df['higher'] = df['diff'].apply(lambda x: x > 0)
         cpx = df['close'].tolist()[-1]
         if df['higher'].tail(5).tolist() == [False, False, False, False, True]:
-            print('{} breakout at price {}'.format(p, cpx))
+            print(red('{} breakout at price {}'.format(p, cpx)))
         print("{} hodl current price: {}".format(p, cpx))
         time.sleep(10)
 
