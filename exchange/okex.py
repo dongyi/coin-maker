@@ -191,6 +191,9 @@ class OKCoinFuture:
 
 
 class OKCoinSpot:
+    """
+    https://www.okex.com/rest_api.html
+    """
     def __init__(self, url, apikey, secretkey):
         self.__url = url
         self.__apikey = apikey
@@ -212,14 +215,37 @@ class OKCoinSpot:
             params = 'symbol=%(symbol)s' % {'symbol': symbol}
         return httpGet(self.__url, DEPTH_RESOURCE, params)
 
-        # 获取OKCOIN现货历史交易信息
-
+    # 获取OKCOIN现货历史交易信息
     def trades(self, symbol=''):
         TRADES_RESOURCE = "/api/v1/trades.do"
         params = ''
         if symbol:
             params = 'symbol=%(symbol)s' % {'symbol': symbol}
         return httpGet(self.__url, TRADES_RESOURCE, params)
+
+    # 获取ohlc
+    def ohlc(self, symbol, unit):
+        """
+        1min : 1分钟
+        3min : 3分钟
+        5min : 5分钟
+        15min : 15分钟
+        30min : 30分钟
+        1day : 1日
+        3day : 3日
+        1week : 1周
+        1hour : 1小时
+        2hour : 2小时
+        4hour : 4小时
+        6hour : 6小时
+        12hour : 12小时
+        :param symbol: 
+        :param unit: 
+        :return: 
+        """
+        OHLC_RESOURCE = "/api/v1/kline.do"
+        params = 'symbol={}&type={}'.format(symbol, unit)
+        return httpGet(self.__url, OHLC_RESOURCE, params)
 
     # 获取用户现货账户信息
     def userinfo(self):
