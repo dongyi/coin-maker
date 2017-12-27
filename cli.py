@@ -24,6 +24,13 @@ def collect_order(market, exchange):
 
 @click.command()
 @click.option('--exchange', prompt='exchange name')
+def find_breakout(exchange):
+    from script.find_breakout import runner
+    runner()
+
+
+@click.command()
+@click.option('--exchange', prompt='exchange name')
 def watch_indicator(exchange):
     assert exchange == 'bittrex'
     print("===============================================================================")
@@ -39,12 +46,8 @@ def watch_indicator(exchange):
         cny_usd = 6.56
 
         for i in coin_pairs:
-            closing_prices_1min = getClosingPrices(my_bittrex, i, 100, 'oneMin')
+            closing_prices_1min = my_bittrex.getClosingPrices(my_bittrex, i, 100, 'oneMin')
 
-            ohlc = my_bittrex.getHistoricalData(i, period=30, unit='fiveMin')
-            breakout = findBreakout(ohlc, 30)
-            if breakout != 'hold':
-                breakout = red(breakout)
             rsi = calculateRSI(np.array(closing_prices_1min))[-1]
             rsi = round(rsi, 3)
             if rsi <= 20:
@@ -67,7 +70,7 @@ def watch_indicator(exchange):
                 macd_str = red(macd_str)
 
             print("{}: \t price: {}\t\t RSI: {}\tMACD: {}\t {} \t breakout: {}".format(
-                i, round(cny_cpx, 3), rsi, macd_str, '', breakout))
+                i, round(cny_cpx, 3), rsi, macd_str, '', ''))
         print("wait 60s\n\n")
 
     while True:

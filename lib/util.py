@@ -15,12 +15,10 @@ STYLE = {
         'black': 40, 'red': 41, 'green': 42, 'yellow': 43,
         'blue': 44, 'purple': 45, 'cyan': 46, 'white': 47,
     },
-
     'mode': {
         'bold': 1, 'underline': 4, 'blink': 5, 'invert': 7
     },
     'default': {
-
         'end': 0
     }
 }

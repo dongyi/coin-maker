@@ -376,17 +376,16 @@ class Bittrex(object):
 
         return self.api_query('getdeposithistory', params)
 
+    @retry_call(3)
+    def getClosingPrices(self, coin_pair, period, unit):
+        """
+        Returns closing prices within a specified time frame for a coin pair
+        :return: Array of closing prices
+        """
 
-@retry_call(3)
-def getClosingPrices(bittrex_api, coin_pair, period, unit):
-    """
-    Returns closing prices within a specified time frame for a coin pair
-    :return: Array of closing prices
-    """
-
-    historical_data = bittrex_api.getHistoricalData(coin_pair, period, unit)
-    closing_prices = []
-    for i in historical_data:
-        closing_prices.append(i['C'])
-    return closing_prices
+        historical_data = self.getHistoricalData(coin_pair, period, unit)
+        closing_prices = []
+        for i in historical_data:
+            closing_prices.append(i['C'])
+        return closing_prices
 
