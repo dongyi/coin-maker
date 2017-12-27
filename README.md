@@ -35,6 +35,10 @@
 
  `python cli.py watch_indicator --exchange [bittrex]`
 
+- watch breakout
+
+ `python cli.py find_breakout --exchange bittrex`
+
 ## exchange APIs
 
 - bittrex
@@ -52,6 +56,8 @@
 - bitstamp
 
 - bigone
+
+- binance
 
 
 ## technical analyse

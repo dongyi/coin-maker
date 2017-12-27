@@ -4,6 +4,7 @@ price break ma5 smoothly, send notification
 
 """
 
+import time
 import pandas as pd
 
 from concurrent import futures
@@ -17,16 +18,19 @@ from exchange.bittrex import Bittrex
 
 @fail_default('error in fetch price')
 def find_breakout(p):
-    my_bittrex = Bittrex(*load_api_key('bittrex'))
-    closing_prices_1min = my_bittrex.getClosingPrices(my_bittrex, p, 100, 'oneMin')
-    df = pd.DataFrame([])
-    df['close'] = closing_prices_1min
-    df['ma5'] = df['close'].rolling(5).mean().fillna(method='bfill')
-    df['diff'] = df['close'] - df['ma5']
-    df['higher'] = df['diff'].apply(lambda x: x > 0)
-    if df['higher'].tail(5).tolist() == [False, False, False, False, True]:
-        return '{} breakout at price {}'.format(p, df['close'].tolist()[-1])
-    return ''
+    while True:
+        my_bittrex = Bittrex(*load_api_key('bittrex'))
+        closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'oneMin')
+        df = pd.DataFrame([])
+        df['close'] = closing_prices_1min
+        df['ma5'] = df['close'].rolling(5).mean().fillna(method='bfill')
+        df['diff'] = df['close'] - df['ma5']
+        df['higher'] = df['diff'].apply(lambda x: x > 0)
+        cpx = df['close'].tolist()[-1]
+        if df['higher'].tail(5).tolist() == [False, False, False, False, True]:
+            print('{} breakout at price {}'.format(p, cpx))
+        print("{} hodl current price: {}".format(p, cpx))
+        time.sleep(10)
 
 
 def runner():

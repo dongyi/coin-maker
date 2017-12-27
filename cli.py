@@ -5,7 +5,6 @@ from lib.util import *
 from ta.indicators import *
 
 from exchange.bittrex import Bittrex
-from exchange.bittrex import getClosingPrices
 
 import script.collect_orders
 
@@ -88,6 +87,8 @@ def analyse_volatilty(exchange):
 cli.add_command(collect_order)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
+cli.add_command(find_breakout)
+
 
 if __name__ == "__main__":
     cli()
