@@ -137,6 +137,7 @@ class Bittrex(object):
     # unit is the number of periods to be returned
     @retry_call(3)
     def getHistoricalData(self, market, period, unit):
+        assert unit in ['oneMin', 'fiveMin', 'thirtyMin', 'hour', 'week', 'day', 'month'], 'invalid unit'
         request_url = 'https://bittrex.com/Api/v2.0/pub/market/GetTicks?marketName=%s&tickInterval=%s' % (market, unit)
 
         historicalData = requests.get(request_url,
