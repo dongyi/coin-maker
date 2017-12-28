@@ -45,7 +45,7 @@ def watch_indicator(exchange):
         cny_usd = 6.56
 
         for i in coin_pairs:
-            closing_prices_1min = my_bittrex.getClosingPrices(my_bittrex, i, 100, 'oneMin')
+            closing_prices_1min = my_bittrex.getClosingPrices(i, 100, 'oneMin')
 
             rsi = calculateRSI(np.array(closing_prices_1min))[-1]
             rsi = round(rsi, 3)
