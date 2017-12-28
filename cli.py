@@ -70,7 +70,7 @@ def watch_indicator(exchange):
             if np.diff(np.array(macd)).max() < 0:
                 macd_str = red(macd_str)
 
-            print("{}: \t price: {}\t\t RSI: {}\tMACD: {}\t {} \t breakout: {}".format(
+            print("{}: \t price: {}\t\t RSI: {}\tMACD: {}\t {} \t {}".format(
                 i, round(cny_cpx, 3), rsi, macd_str, '', ''))
         print("wait 60s\n\n")
 
