@@ -29,7 +29,7 @@
 
 - collect order history  收集成交历史, 写入csv文件
 
- `python cli.py collect_order --market [BTC-1ST] --exchange [bittrex]`
+ `python cli.py collect_order --market [BTC-ETH] --exchange [bittrex]`
 
 - watch indicators       监控技术指标, 现在有rsi/macd
 
