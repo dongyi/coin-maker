@@ -27,17 +27,21 @@
 
 ```
 
-- collect order history
+- collect order history  收集成交历史, 写入csv文件
 
  `python cli.py collect_order --market [BTC-1ST] --exchange [bittrex]`
 
-- watch indicators
+- watch indicators       监控技术指标, 现在有rsi/macd
 
  `python cli.py watch_indicator --exchange [bittrex]`
 
-- watch breakout
+- watch breakout         监控价格突破均线
 
  `python cli.py find_breakout --exchange bittrex`
+
+- order book analyse     分析盘口
+
+ `python cli.py watch_laplace_indicator --exchange bittrex --pair BTC-1ST`
 
 ## exchange APIs
 
