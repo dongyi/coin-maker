@@ -201,7 +201,7 @@ class Bittrex(object):
         :param market: String literal for the market (ex: BTC-LTC)
         :type market: str
         :param depth_type: buy, sell or both to identify the type of orderbook to return.
-            Use constants BUY_ORDERBOOK, SELL_ORDERBOOK, BOTH_ORDERBOOK
+             "sell" or "both", "buy"
         :type depth_type: str
         :param depth: how deep of an order book to retrieve. Max is 100, default is 20
         :type depth: int

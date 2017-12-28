@@ -8,6 +8,8 @@ from exchange.bittrex import Bittrex
 
 import script.collect_orders
 
+import datetime
+
 
 @click.group()
 def cli():
@@ -97,12 +99,24 @@ def plot_ether_transactions(address):
     print(transactions[0])
 
 
+@click.command()
+@click.option('--pair', prompt='trade pair')
+@click.option('--exchange', prompt='exchange name')
+def watch_laplace_indicator(pair, exchange):
+    from strategy.Laplace import laplace_indicator
+    while True:
+        value = laplace_indicator(pair, exchange)
+        print("{} {} {}".format(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                                pair, value))
+        time.sleep(30)
+
+
 cli.add_command(collect_order)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
 cli.add_command(find_breakout)
 cli.add_command(plot_ether_transactions)
-
+cli.add_command(watch_laplace_indicator)
 
 if __name__ == "__main__":
     cli()
