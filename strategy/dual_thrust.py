@@ -4,7 +4,7 @@ from lib.util import red, green
 
 def handle_bar(exchange, p):
     data_proxy = DataProxy(exchange)
-    ohlc = data_proxy.ohlc(p, 20, '1min')
+    ohlc = data_proxy.ohlc(p, 20, 'oneMin')
     open = [i['open'] for i in ohlc]
     close = [i['close'] for i in ohlc]
     high = [i['high'] for i in ohlc]
