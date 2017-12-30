@@ -27,7 +27,7 @@ class DataProxy:
         self.__api_client = self.__api_class(*load_api_key(exchange))
 
     @retry_call(3)
-    def ohlc(self):
+    def ohlc(self, pair, period, unit):
         pass
 
     @retry_call(3)
