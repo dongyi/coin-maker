@@ -3,6 +3,7 @@ user.*
 *.csv
 *.ipynb
 *.xml
+*.json
 .idea/
 .ipynb_checkpoints/
 secrets.json
