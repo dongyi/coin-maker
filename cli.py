@@ -94,9 +94,9 @@ def plot_ether_transactions(address):
         key = json.loads(key_file.read())['key']
 
     api = Account(address=address, api_key=key)
-    transactions = api.get_all_transactions(offset=10000, sort='asc', internal=True)
+    transactions = api.normal_transactions()
 
-    print(transactions[0])
+    print(transactions)
 
 
 @click.command()

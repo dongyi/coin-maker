@@ -1,11 +1,14 @@
 from .client import Client
 import re
+import requests
 
 
 class Account(Client):
     def __init__(self, address=Client.dao_address, api_key='YourApiKeyToken'):
         Client.__init__(self, address=address, api_key=api_key)
         self.url_dict[self.MODULE] = 'account'
+        self.__address = address
+        self.__api_key = api_key
 
     def get_balance(self):
         self.url_dict[self.ACTION] = 'balance'
@@ -138,3 +141,8 @@ class Account(Client):
         Gets last page of transactions (last 10k trans) and updates current trans book (book)
         """
         pass
+
+    def normal_transactions(self):
+        url = "http://api.etherscan.io/api?module=account&action=txlist&address={}&startblock=0&endblock=99999999&sort=asc&apikey={}"
+        res = requests.get(url.format(self.__address, self.__api_key)).text
+        return res
