@@ -6,7 +6,7 @@ from ta.indicators import *
 
 from exchange.bittrex import Bittrex
 
-import script.collect_orders
+import script.collect_trades
 
 import datetime
 
@@ -19,8 +19,8 @@ def cli():
 @click.command()
 @click.option('--market', prompt='market pair')
 @click.option('--exchange', prompt='exchange name')
-def collect_order(market, exchange):
-    script.collect_orders.runner(exchange, market)
+def collect_trades(market, exchange):
+    script.collect_trades.runner(exchange, market)
 
 
 @click.command()
@@ -121,7 +121,7 @@ def market_maker(pair, exchange):
         time.sleep(30)
 
 
-cli.add_command(collect_order)
+cli.add_command(collect_trades)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
 cli.add_command(find_breakout)
