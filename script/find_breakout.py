@@ -58,6 +58,7 @@ def break_bollinger_bands(p, exchange):
             # break bollinger bands down
             print(red("{} breakout down at price {}".format(p, cpx)))
         time.sleep(10)
+        print("\n")
 
 
 def runner(exchange):

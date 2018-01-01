@@ -77,8 +77,6 @@ def watch_indicator(exchange):
     while True:
         get_signal()
         time.sleep(60)
-        print("===========")
-        print("\n"*5)
 
 
 @click.command()
