@@ -37,5 +37,6 @@ class DataProxy:
         pass
 
     @retry_call(3)
-    def order_books(self):
-        pass
+    def order_books(self, pair, count):
+        if self.__exchange == 'bittrex':
+            return self.__api_client.get_orderbook(pair, 'both', count)

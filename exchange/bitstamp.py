@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import requests
 from decimal import Decimal
+from exchange.common import headers, ExchangeWrapper
+
+import requests
 import time
-from common import headers, ExchangeWrapper
 import hmac
 import hashlib
 

@@ -53,7 +53,12 @@ function onTick() {
 from exchange.data_proxy import DataProxy
 
 
-def on_tick():
+def on_tick(pair, exchange):
     # run in loop outside 3s/tick
-    pass
-
+    data_api = DataProxy(exchange)
+    order_slice = data_api.order_books(pair, 100)['result']
+    print(order_slice)
+    buy_orders = order_slice['buy']
+    sell_orders = order_slice['sell']
+    spread = buy_orders[0]['Rate'] - sell_orders[0]['Rate']
+    print('spread: ', spread)

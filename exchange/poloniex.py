@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from common import APIError, headers, ExchangeWrapper
-import datetime, time
+from exchange.common import APIError, headers, ExchangeWrapper
+import datetime
+import time
 import requests
-import hmac, hashlib
+import hmac
+import hashlib
 from decimal import Decimal
 
 
@@ -136,7 +138,7 @@ class Poloniex(ExchangeWrapper):
         try:
             result = requests.post(self.url + "tradingApi", data=data,
                                    headers=self.headers, timeout=self.timeout)
-            #assert result.status_code == 200
+            # assert result.status_code == 200
             return result.json()
         except requests.exceptions.RequestException as e:
             return APIError(e)
@@ -194,8 +196,8 @@ class Poloniex(ExchangeWrapper):
         else:
             raise APIError('''Poloniex API does no support queries for data older than a month.
             Earilest data we can get is since {0} UTC'''.format((
-                datetime.datetime.now() - cls.time_limit).isoformat())
-                            )
+                                                                                                   datetime.datetime.now() - cls.time_limit).isoformat())
+                           )
 
     @classmethod
     def get_full_market_trade_history(cls, pair):
@@ -297,8 +299,9 @@ class Poloniex(ExchangeWrapper):
 
         else:
             raise APIError('''Poloniex API does no support queries for data older than a year.\n
-                                Earilest data we can get is since {0} UTC'''.format((datetime.datetime.now() - self.time_limit).isoformat())
-                                    )
+                                Earilest data we can get is since {0} UTC'''.format(
+                (datetime.datetime.now() - self.time_limit).isoformat())
+                           )
 
     def get_balances(self, coin=None):
         '''get balances of my account, <coin> argument is optional'''
@@ -389,7 +392,7 @@ class Poloniex(ExchangeWrapper):
 
         if not since:
             since = self._to_timestamp(self._subtract_one_month(
-                                       datetime.datetime.now()))
+                datetime.datetime.now()))
 
         if since > time.time():
             raise APIError("Start time can't be future.")
@@ -443,7 +446,7 @@ class Poloniex(ExchangeWrapper):
 
         if not since:
             since = self.to_timestamp(self.subtract_one_month(datetime.datetime.now()
-                                            ))
+                                                              ))
 
         if since > time.time():
             raise APIError("Start time can't be future.")
@@ -456,7 +459,7 @@ class Poloniex(ExchangeWrapper):
     def get_order_trades(self, order_id):
         """Returns any trades made from <orderId>"""
 
-        return self.private_api({'command': 'returnOrderTrades', 
+        return self.private_api({'command': 'returnOrderTrades',
                                  'orderNumber': order_id})
 
     def create_loan_offer(self, coin, amount, rate, auto_renew=0):
@@ -472,7 +475,7 @@ class Poloniex(ExchangeWrapper):
     def cancel_loan_offer(self, order_id):
         """Cancels the loan offer with <orderId>"""
 
-        return self.private_api({'command': 'cancelLoanOffer', 
+        return self.private_api({'command': 'cancelLoanOffer',
                                  'orderNumber': order_id})
 
     def toggle_auto_renew(self, order_id):
@@ -501,7 +504,7 @@ class Poloniex(ExchangeWrapper):
         """Creates <pair> margin sell order at <rate> for <amount>"""
 
         return self.private_api({'command': 'marginSell',
-                                'currencyPair': self.format_pair(pair),
+                                 'currencyPair': self.format_pair(pair),
                                  'rate': rate,
                                  'amount': amount,
                                  'lendingRate': lending_rate
@@ -562,4 +565,3 @@ class Poloniex(ExchangeWrapper):
                                  'fromAccount': fromac,
                                  'toAccount': toac
                                  })
-

@@ -111,12 +111,23 @@ def watch_laplace_indicator(pair, exchange):
         time.sleep(30)
 
 
+@click.command()
+@click.option('--pair', prompt='trade pair')
+@click.option('--exchange', prompt='exchange name')
+def market_maker(pair, exchange):
+    from strategy.market_maker import on_tick
+    while True:
+        on_tick(pair, exchange)
+        time.sleep(30)
+
+
 cli.add_command(collect_order)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
 cli.add_command(find_breakout)
 cli.add_command(plot_ether_transactions)
 cli.add_command(watch_laplace_indicator)
+cli.add_command(market_maker)
 
 if __name__ == "__main__":
     cli()
