@@ -40,3 +40,8 @@ class DataProxy:
     def order_books(self, pair, count):
         if self.__exchange == 'bittrex':
             return self.__api_client.get_orderbook(pair, 'both', count)
+
+    @retry_call(3)
+    def my_account(self):
+        if self.__exchange == 'bittrex':
+            return self.__api_client.get_account()

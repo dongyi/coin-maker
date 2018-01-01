@@ -52,8 +52,12 @@ function onTick() {
 
 from exchange.data_proxy import DataProxy
 
+SPREAD_THRESHOLD = 0.1
+
 
 def on_tick(pair, exchange):
+    my_sell_order = 0
+    my_buy_order = 0
     # run in loop outside 3s/tick
     data_api = DataProxy(exchange)
     order_slice = data_api.order_books(pair, 100)['result']
@@ -62,3 +66,7 @@ def on_tick(pair, exchange):
     sell_orders = order_slice['sell']
     spread = buy_orders[0]['Rate'] - sell_orders[0]['Rate']
     print('spread: ', spread)
+    if spread < SPREAD_THRESHOLD:
+        my_sell_order += 10
+        my_buy_order -= 10
+
