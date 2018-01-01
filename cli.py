@@ -27,7 +27,7 @@ def collect_order(market, exchange):
 @click.option('--exchange', prompt='exchange name')
 def find_breakout(exchange):
     from script.find_breakout import runner
-    runner()
+    runner(exchange)
 
 
 @click.command()

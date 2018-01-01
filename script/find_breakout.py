@@ -38,7 +38,7 @@ def find_breakout(p):
 
 
 @fail_default('error in fetch price')
-def break_bollinger_bands(p):
+def break_bollinger_bands(p, exchange):
     while True:
         my_bittrex = Bittrex(*load_api_key('bittrex'))
         closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'oneMin')
@@ -60,11 +60,11 @@ def break_bollinger_bands(p):
         time.sleep(10)
 
 
-def runner():
+def runner(exchange):
     pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-SC']
 
     with futures.ThreadPoolExecutor(max_workers=20) as executor:
-        future_to_pair = dict((executor.submit(break_bollinger_bands, p), p)
+        future_to_pair = dict((executor.submit(break_bollinger_bands, p, exchange), p)
                               for p in pairs)
 
         for future in futures.as_completed(future_to_pair):
