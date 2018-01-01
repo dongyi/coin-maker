@@ -40,8 +40,8 @@ def find_breakout(p):
 @fail_default('error in fetch price')
 def break_bollinger_bands(p, exchange):
     while True:
-        my_bittrex = Bittrex(*load_api_key('bittrex'))
-        closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'oneMin')
+        my_bittrex = Bittrex(*load_api_key(exchange))
+        closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'fiveMin')
         cpx = closing_prices_1min[-1]
 
         pct_change = closing_prices_1min[-1] / closing_prices_1min[-2]
