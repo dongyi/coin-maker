@@ -1,6 +1,6 @@
 # crypto quant
 
-## usage
+## usage 使用方法
 
 - fill your exchange api keys in secrets.json
 
@@ -43,7 +43,7 @@
 
  `python cli.py watch_laplace_indicator --exchange bittrex --pair BTC-1ST`
 
-## exchange APIs
+## exchange APIs 交易所api
 
 - bittrex
 
@@ -64,12 +64,12 @@
 - binance
 
 
-## technical analyse
+## technical analyse 技术分析
 
 - use api from talib
 
 
-## following
+## following 计划
 
 - more exchange support
 
@@ -81,7 +81,16 @@
 
 - BTC history ohlc analyse
 
-## donation
+
+## refs 参考
+
+- website 有用的网站
+
+ [arbitrage/market maker chance](http://data.bitcoinity.org/)
+ 
+ [alts/btc infos](https://coinmarketcap.com/)
+
+## donation 捐赠
 
 - 比特币乞讨  (bitcoin address):
  
