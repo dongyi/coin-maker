@@ -122,6 +122,13 @@ def market_maker(pair, exchange):
         time.sleep(30)
 
 
+@click.command()
+@click.option('--exchange', prompt='exchange name')
+def custom_strategy(exchange):
+    from strategy.custom_strategy import runner
+    runner(exchange)
+
+
 cli.add_command(collect_trades)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
@@ -129,6 +136,7 @@ cli.add_command(find_breakout)
 cli.add_command(plot_ether_transactions)
 cli.add_command(watch_laplace_indicator)
 cli.add_command(market_maker)
+cli.add_command(custom_strategy)
 
 if __name__ == "__main__":
     cli()

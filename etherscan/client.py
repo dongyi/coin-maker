@@ -81,7 +81,7 @@ class Client(object):
             req = self.http.get(self.url)
         except requests.exceptions.ConnectionError:
             print("Connection refused")
-            exit()
+            return
             
         if req.status_code == 200:
             # Check for empty response
@@ -90,13 +90,13 @@ class Client(object):
                     return req.json()
                 else:
                     print(req.json()['message'])
-                    exit()
+                    return
             else:
                 print("Invalid Request")
-                exit()
+                return
         else:
             print("Problem with connection, status code: ", req.status_code)
-            exit()
+            return
 
     def check_and_get_api(self):
         if self.url_dict[self.API_KEY]:  # Check if api_key is empty string
