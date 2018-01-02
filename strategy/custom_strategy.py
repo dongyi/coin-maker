@@ -19,6 +19,7 @@ import numpy as np
 @fail_default('error in fetch price')
 def find_breakout_and_trade(p, exchange):
     df_vol = pd.DataFrame([])
+    latest_btc = 0
     while True:
         my_bittrex = Bittrex(*load_api_key(exchange))
         closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'oneMin')
@@ -28,10 +29,16 @@ def find_breakout_and_trade(p, exchange):
         df['diff'] = df['close'] - df['ma5']
         df['higher'] = df['diff'].apply(lambda x: x > 0)
         cpx = df['close'].tolist()[-1]
+        if p == 'USDT-BTC':
+            latest_btc = cpx
+            cny_price = cpx * 6.5
+        else:
+            cny_price = cpx * latest_btc * 6.5
         if df['higher'].tail(5).tolist() == [False, False, False, False, True]:
-            print(green("{} breakout up at price {}".format(p, cpx)))
+
+            print(green("{} breakout up at price {}".format(p, cny_price)))
         if df['higher'].tail(5).tolist() == [True, True, True, True, False]:
-            print(red("{} breakout down at price {}".format(p, cpx)))
+            print(red("{} breakout down at price {}".format(p, cny_price)))
 
         order_slice = my_bittrex.get_market_history(p, 100)
 
@@ -45,8 +52,9 @@ def find_breakout_and_trade(p, exchange):
         near_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 300 + 8*3600)].copy()
         far_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 3000 + 8*3600)].copy()
 
-        if near_vol['Quantity'].mean() > far_vol['Quantity'].mean() * 3:
+        if near_vol['Quantity'].mean() > far_vol['Quantity'].mean() * 2:
             print(green("high volume {}, {}".format(p, near_vol['Quantity'].mean())))
+
         time.sleep(10)
 
 
