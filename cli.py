@@ -6,7 +6,7 @@ from ta.indicators import *
 
 from exchange.bittrex import Bittrex
 
-import script.collect_orders
+import script.collect_trades
 
 import datetime
 
@@ -19,15 +19,15 @@ def cli():
 @click.command()
 @click.option('--market', prompt='market pair')
 @click.option('--exchange', prompt='exchange name')
-def collect_order(market, exchange):
-    script.collect_orders.runner(exchange, market)
+def collect_trades(market, exchange):
+    script.collect_trades.runner(exchange, market)
 
 
 @click.command()
 @click.option('--exchange', prompt='exchange name')
 def find_breakout(exchange):
     from script.find_breakout import runner
-    runner()
+    runner(exchange)
 
 
 @click.command()
@@ -95,9 +95,9 @@ def plot_ether_transactions(address):
 
     api = Account(address=address, api_key=key)
 
-    transactions = api.get_all_transactions(offset=10000, sort='asc', internal=True)
+    transactions = api.normal_transactions()
 
-    print(transactions[0])
+    print(transactions)
 
 
 @click.command()
@@ -112,12 +112,23 @@ def watch_laplace_indicator(pair, exchange):
         time.sleep(30)
 
 
-cli.add_command(collect_order)
+@click.command()
+@click.option('--pair', prompt='trade pair')
+@click.option('--exchange', prompt='exchange name')
+def market_maker(pair, exchange):
+    from strategy.market_maker import on_tick
+    while True:
+        on_tick(pair, exchange)
+        time.sleep(30)
+
+
+cli.add_command(collect_trades)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
 cli.add_command(find_breakout)
 cli.add_command(plot_ether_transactions)
 cli.add_command(watch_laplace_indicator)
+cli.add_command(market_maker)
 
 if __name__ == "__main__":
     cli()

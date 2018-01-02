@@ -27,13 +27,21 @@ class DataProxy:
         self.__api_client = self.__api_class(*load_api_key(exchange))
 
     @retry_call(3)
-    def ohlc(self):
-        pass
+    def ohlc(self, pair, period, unit):
+        if self.__exchange == 'bittrex':
+            bittrex_ohlc = self.__api_client.getHistoricalData(pair, period, unit)
+            return [{'close': x['C'], 'open': x['O'], 'high': x['H'], 'low': x['L']} for x in bittrex_ohlc]
 
     @retry_call(3)
     def trades(self):
         pass
 
     @retry_call(3)
-    def order_books(self):
-        pass
+    def order_books(self, pair, count):
+        if self.__exchange == 'bittrex':
+            return self.__api_client.get_orderbook(pair, 'both', count)
+
+    @retry_call(3)
+    def my_account(self):
+        if self.__exchange == 'bittrex':
+            return self.__api_client.get_account()

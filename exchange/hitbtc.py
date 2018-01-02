@@ -5,7 +5,7 @@
 import time
 import requests
 from decimal import Decimal
-from common import APIError, headers, ExchangeWrapper
+from exchange.common import APIError, headers, ExchangeWrapper
 
 
 class Hitbtc(ExchangeWrapper):
