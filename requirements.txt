@@ -20,3 +20,4 @@ pandas==0.20.3
 redis==2.10.6
 click==6.7
 dateutil==2.6.0
+gevent=0.4.10

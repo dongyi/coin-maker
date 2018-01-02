@@ -14,14 +14,25 @@ import time
 import talib
 import pandas as pd
 import numpy as np
+import gevent
+from functools import partial
 
 latest_btc = 0
+from gevent import monkey
+
+monkey.patch_time()
+monkey.patch_socket()
+monkey.patch_signal()
+monkey.patch_os()
+
+monkey.patch_dns()
+monkey.patch_sys()
 
 
 @fail_default('error in fetch price')
 def find_breakout_and_trade(p, exchange):
     df_vol = pd.DataFrame([])
-    global latest_btc
+    print("start....", p)
     while True:
         now_dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         my_bittrex = Bittrex(*load_api_key(exchange))
@@ -56,20 +67,13 @@ def find_breakout_and_trade(p, exchange):
 
         if near_vol['Quantity'].mean() > far_vol['Quantity'].mean() * 2:
             print(green("[{}] high volume {}, {}".format(now_dt, p, near_vol['Quantity'].mean())))
-
         time.sleep(10)
 
 
 def runner(exchange):
     pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-SC']
+    l = []
+    for p in pairs:
+        l.append(gevent.spawn(find_breakout_and_trade, p, exchange))
 
-    with futures.ThreadPoolExecutor(max_workers=20) as executor:
-        future_to_pair = dict((executor.submit(find_breakout_and_trade, p, exchange), p)
-                              for p in pairs)
-
-        for future in futures.as_completed(future_to_pair):
-            p = future_to_pair[future]
-            if future.exception() is not None:
-                print('{} generated an exception: {}'.format(p, future.exception()))
-            else:
-                print('{} result: {}'.format(p, future.result()))
+    gevent.joinall(l)
