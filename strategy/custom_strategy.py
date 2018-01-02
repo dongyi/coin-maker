@@ -67,7 +67,7 @@ def find_breakout_and_trade(p, exchange):
 
         if near_vol['Quantity'].mean() > far_vol['Quantity'].mean() * 2:
             print(green("[{}] high volume {}, {}".format(now_dt, p, near_vol['Quantity'].mean())))
-        time.sleep(10)
+        time.sleep(30)
 
 
 def runner(exchange):
