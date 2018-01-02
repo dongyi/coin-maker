@@ -73,19 +73,27 @@ class Account(Client):
         self.build_url()
 
         trans_list = []
+        f = open('transactions.log', 'a')
         while True:
             self.build_url()
             req = self.connect()
+
             if "No transactions found" in req['message']:
                 print("Total number of transactions: {}".format(len(trans_list)))
                 self.page = ''
+                f.flush()
+                f.close()
                 return trans_list
             else:
+                f.write(req['result'])
+                f.write('\n')
                 trans_list += req['result']
                 # Find any character block that is a integer of any length
                 page_number = re.findall(r'[1-9](?:\d{0,2})(?:,\d{3})*(?:\.\d*[1-9])?|0?\.\d*[1-9]|0', self.url_dict[self.PAGE])
                 print("page {} added".format(page_number[0]))
                 self.url_dict[self.PAGE] = str(int(page_number[0]) + 1)
+                print("fetching page")
+
 
     def get_blocks_mined_page(self, blocktype='blocks', page=1, offset=10000) -> list:
         """
