@@ -144,7 +144,13 @@ class Bittrex(object):
                                       headers={"apisign": hmac.new(self.api_secret.encode(), request_url.encode(),
                                                                    hashlib.sha512).hexdigest()}
                                       ).json()
-
+        # {'O': 0.00097396,
+        # 'H': 0.00097991,
+        # 'L': 0.00097396,
+        # 'C': 0.00097912,
+        # 'V': 755.23601906,
+        # 'T': '2017-12-23T06:17:00',
+        # 'BV': 0.7381505}
         return historicalData['result'][-period:]
 
     def get_markets(self):
