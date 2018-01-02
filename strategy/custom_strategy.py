@@ -32,7 +32,7 @@ monkey.patch_sys()
 @fail_default('error in fetch price')
 def find_breakout_and_trade(p, exchange):
     df_vol = pd.DataFrame([])
-    print("start....", p)
+    global latest_btc
     while True:
         now_dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         my_bittrex = Bittrex(*load_api_key(exchange))
