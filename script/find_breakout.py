@@ -29,9 +29,9 @@ def find_breakout(p):
         df['diff'] = df['close'] - df['ma5']
         df['higher'] = df['diff'].apply(lambda x: x > 0)
         cpx = df['close'].tolist()[-1]
-        if df['higher'].tail(5).tolist() == [False, False, False, False, True]:
+        if df['higher'].tail(5).tolist()[::-1] == [False, False, False, False, True]:
             print(green("{} breakout up at price {}".format(p, cpx)))
-        if df['higher'].tail(5).tolist() == [True, True, True, True, False]:
+        if df['higher'].tail(5).tolist()[::-1] == [True, True, True, True, False]:
             print(red("{} breakout down at price {}".format(p, cpx)))
         print("{} hodl current price: {}".format(p, cpx))
         time.sleep(10)

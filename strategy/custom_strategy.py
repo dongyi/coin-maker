@@ -15,14 +15,16 @@ import talib
 import pandas as pd
 import numpy as np
 
+latest_btc = 0
+
 
 @fail_default('error in fetch price')
 def find_breakout_and_trade(p, exchange):
     df_vol = pd.DataFrame([])
-    latest_btc = 0
+    global latest_btc
     while True:
         my_bittrex = Bittrex(*load_api_key(exchange))
-        closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'oneMin')
+        closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'fiveMin')
         df = pd.DataFrame([])
         df['close'] = closing_prices_1min
         df['ma5'] = df['close'].rolling(5).mean().fillna(method='bfill')
@@ -34,10 +36,10 @@ def find_breakout_and_trade(p, exchange):
             cny_price = cpx * 6.5
         else:
             cny_price = cpx * latest_btc * 6.5
-        if df['higher'].tail(5).tolist() == [False, False, False, False, True]:
+        if df['higher'].tail(5).tolist()[::-1] == [False, False, False, False, True]:
 
             print(green("{} breakout up at price {}".format(p, cny_price)))
-        if df['higher'].tail(5).tolist() == [True, True, True, True, False]:
+        if df['higher'].tail(5).tolist()[::-1] == [True, True, True, True, False]:
             print(red("{} breakout down at price {}".format(p, cny_price)))
 
         order_slice = my_bittrex.get_market_history(p, 100)
@@ -60,7 +62,7 @@ def find_breakout_and_trade(p, exchange):
 
 def runner(exchange):
     pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-SC']
-
+    pairs = ['BTC-1ST']
     with futures.ThreadPoolExecutor(max_workers=20) as executor:
         future_to_pair = dict((executor.submit(find_breakout_and_trade, p, exchange), p)
                               for p in pairs)
