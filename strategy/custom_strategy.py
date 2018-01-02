@@ -23,11 +23,12 @@ def find_breakout_and_trade(p, exchange):
     df_vol = pd.DataFrame([])
     global latest_btc
     while True:
+        now_dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         my_bittrex = Bittrex(*load_api_key(exchange))
         closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'fiveMin')
         df = pd.DataFrame([])
         df['close'] = closing_prices_1min
-        df['ma5'] = df['close'].rolling(5).mean().fillna(method='bfill')
+        df['ma5'] = df['close'].rolling(5, center=False).mean().fillna(method='bfill')
         df['diff'] = df['close'] - df['ma5']
         df['higher'] = df['diff'].apply(lambda x: x > 0)
         cpx = df['close'].tolist()[-1]
@@ -37,9 +38,9 @@ def find_breakout_and_trade(p, exchange):
         else:
             cny_price = cpx * latest_btc * 6.5
         if df['higher'].tail(5).tolist()[::-1] == [True, False, False, False, False]:
-            print(green("{} breakout up at price {}".format(p, cny_price)))
+            print(green("[{}] {} breakout up at price {}".format(now_dt, p, cny_price)))
         if df['higher'].tail(5).tolist()[::-1] == [False, True, True, True, True]:
-            print(red("{} breakout down at price {}".format(p, cny_price)))
+            print(red("[{}] {} breakout down at price {}".format(now_dt, p, cny_price)))
 
         order_slice = my_bittrex.get_market_history(p, 100)
 
@@ -54,7 +55,7 @@ def find_breakout_and_trade(p, exchange):
         far_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 3000 + 8*3600)].copy()
 
         if near_vol['Quantity'].mean() > far_vol['Quantity'].mean() * 2:
-            print(green("high volume {}, {}".format(p, near_vol['Quantity'].mean())))
+            print(green("[{}] high volume {}, {}".format(now_dt, p, near_vol['Quantity'].mean())))
 
         time.sleep(10)
 
