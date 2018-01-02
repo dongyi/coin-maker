@@ -62,7 +62,7 @@ def find_breakout_and_trade(p, exchange):
 
 def runner(exchange):
     pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-SC']
-    pairs = ['BTC-1ST']
+
     with futures.ThreadPoolExecutor(max_workers=20) as executor:
         future_to_pair = dict((executor.submit(find_breakout_and_trade, p, exchange), p)
                               for p in pairs)
