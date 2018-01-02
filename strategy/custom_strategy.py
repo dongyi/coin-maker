@@ -42,8 +42,8 @@ def find_breakout_and_trade(p, exchange):
 
         now = datetime.datetime.now()
 
-        near_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 300)].copy()
-        far_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 300)].copy()
+        near_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 300 + 8*3600)].copy()
+        far_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 3000 + 8*3600)].copy()
 
         if near_vol['Quantity'].mean() > far_vol['Quantity'].mean() * 3:
             print(green("high volume {}, {}".format(p, near_vol['Quantity'].mean())))
