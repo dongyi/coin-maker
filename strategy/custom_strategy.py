@@ -63,7 +63,7 @@ def find_breakout_and_trade(p, exchange):
         far_vol = ohlc_df[ohlc_df['local_tm'].apply(lambda x:(now - x).seconds < 3600)].copy()
 
         if near_vol['volume'].mean() > far_vol['volume'].mean() * 2:
-            print(green("[{}] high volume {}, {}".format(now_dt, p, near_vol['Quantity'].mean())))
+            print(green("[{}] high volume {}, {}".format(now_dt, p, near_vol['volume'].mean())))
         time.sleep(30)
 
 
