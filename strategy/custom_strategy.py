@@ -7,6 +7,7 @@ from lib.util import red, green
 
 
 from exchange.bittrex import Bittrex
+from exchange.data_proxy import DataProxy
 
 import datetime
 import dateutil.parser
@@ -31,12 +32,13 @@ monkey.patch_sys()
 
 @fail_default('error in fetch price')
 def find_breakout_and_trade(p, exchange):
-    df_vol = pd.DataFrame([])
+
     global latest_btc
     while True:
         now_dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        my_bittrex = Bittrex(*load_api_key(exchange))
-        closing_prices_1min = my_bittrex.getClosingPrices(p, 100, 'fiveMin')
+        data_api = DataProxy('bittrex')
+        ohlc = data_api.ohlc(p, 100, 'fiveMin')
+        closing_prices_1min = [i['close'] for i in ohlc]
         df = pd.DataFrame([])
         df['close'] = closing_prices_1min
         df['ma5'] = df['close'].rolling(5, center=False).mean().fillna(method='bfill')
@@ -53,19 +55,14 @@ def find_breakout_and_trade(p, exchange):
         if df['higher'].tail(5).tolist()[::-1] == [False, True, True, True, True]:
             print(red("[{}] {} breakout down at price {}".format(now_dt, p, cny_price)))
 
-        order_slice = my_bittrex.get_market_history(p, 100)
-
-        slice_df = pd.DataFrame(order_slice['result'])
-
-        df_vol = df_vol.append(slice_df)
-        df_vol.drop_duplicates(subset=['Id'], keep='last', inplace=True)
-
+        ohlc_df = pd.DataFrame(ohlc)
+        ohlc_df['local_tm'] = ohlc_df['timestamp'].apply(lambda x: dateutil.parser.parse(x) + datetime.timedelta(hours=8))
         now = datetime.datetime.now()
 
-        near_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 300 + 8*3600)].copy()
-        far_vol = df_vol[df_vol['TimeStamp'].apply(lambda x: (now - dateutil.parser.parse(x)).seconds < 3000 + 8*3600)].copy()
+        near_vol = ohlc_df[ohlc_df['local_tm'].apply(lambda x:(now - x).seconds < 300)].copy()
+        far_vol = ohlc_df[ohlc_df['local_tm'].apply(lambda x:(now - x).seconds < 3600)].copy()
 
-        if near_vol['Quantity'].mean() > far_vol['Quantity'].mean() * 2:
+        if near_vol['volume'].mean() > far_vol['volume'].mean() * 2:
             print(green("[{}] high volume {}, {}".format(now_dt, p, near_vol['Quantity'].mean())))
         time.sleep(30)
 

@@ -30,7 +30,10 @@ class DataProxy:
     def ohlc(self, pair, period, unit):
         if self.__exchange == 'bittrex':
             bittrex_ohlc = self.__api_client.getHistoricalData(pair, period, unit)
-            return [{'close': x['C'], 'open': x['O'], 'high': x['H'], 'low': x['L']} for x in bittrex_ohlc]
+            return [{'close': x['C'], 'open': x['O'],
+                     'high': x['H'], 'low': x['L'],
+                     'volume': x['V'], 'timestamp': x['T'], 'BTC_volume': x['BV']
+                     } for x in bittrex_ohlc]
 
     @retry_call(3)
     def trades(self):
