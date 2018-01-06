@@ -59,7 +59,7 @@ def find_breakout_and_trade(p, exchange):
         ohlc_df['local_tm'] = ohlc_df['timestamp'].apply(lambda x: dateutil.parser.parse(x) + datetime.timedelta(hours=8))
         now = datetime.datetime.now()
 
-        near_vol = ohlc_df[ohlc_df['local_tm'].apply(lambda x:(now - x).seconds < 300)].copy()
+        near_vol = ohlc_df[ohlc_df['local_tm'].apply(lambda x:(now - x).seconds < 60)].copy()
         far_vol = ohlc_df[ohlc_df['local_tm'].apply(lambda x:(now - x).seconds < 3600)].copy()
 
         if near_vol['volume'].mean() > far_vol['volume'].mean() * 2:
