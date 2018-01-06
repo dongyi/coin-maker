@@ -36,8 +36,8 @@ def find_breakout_and_trade(p, exchange):
     global latest_btc
     while True:
         now_dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        data_api = DataProxy('bittrex')
-        ohlc = data_api.ohlc(p, 100, 'fiveMin')
+        data_api = DataProxy(exchange)
+        ohlc = data_api.ohlc(p, 100, 'oneMin')
         closing_prices_1min = [i['close'] for i in ohlc]
         df = pd.DataFrame([])
         df['close'] = closing_prices_1min
