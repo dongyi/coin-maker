@@ -33,8 +33,7 @@ import hashlib
 import struct
 import time
 import sys
-import urllib.request
-
+import requests
 
 from lib.util import retry_call
 from lib.util import load_api_key
@@ -88,20 +87,16 @@ class ZB:
         return dg
 
     def __api_call(self, path, params=''):
-        try:
-            SHA_secret = self.__digest(self.mysecret)
-            sign = self.__hmacSign(params, SHA_secret)
-            self.jm = sign
-            reqTime = (int)(time.time() * 1000)
-            params += '&sign=%s&reqTime=%d' % (sign, reqTime)
-            url = 'https://trade.zb.com/api/' + path + '?' + params
-            req = urllib.request.Request(url)
-            res = urllib.request.urlopen(req, timeout=2)
-            doc = json.loads(res.read())
-            return doc
-        except Exception as ex:
-            print(sys.stderr, 'zb request ex: ', ex)
-            return None
+        SHA_secret = self.__digest(self.mysecret)
+        sign = self.__hmacSign(params, SHA_secret)
+        self.jm = sign
+        reqTime = int((time.time() * 1000))
+        params += '&sign=%s&reqTime=%d' % (sign, reqTime)
+        url = 'http://api.zb.com/data/v1/' + path + '?' + params
+        res = requests.get(url)
+        txt = res.text
+        doc = json.loads(txt)
+        return doc
 
     @retry_call(3)
     def query_account(self):
@@ -113,8 +108,8 @@ class ZB:
         return obj
 
     @retry_call(3)
-    def trades(self):
-        params = "accesskey=" + self.mykey + "&method=getAccountInfo"
+    def trades(self, pair):
+        params = "market={}".format(pair)
         path = "trades"
         obj = self.__api_call(path, params)
         return obj
@@ -123,7 +118,7 @@ class ZB:
 def test_api():
     key, secret = load_api_key('zb')
     api = ZB(key, secret)
-    print(api.trades())
+    print(api.trades('1stusdt'))
 
 
 if __name__ == '__main__':
