@@ -37,9 +37,10 @@ import urllib.request
 
 
 from lib.util import retry_call
+from lib.util import load_api_key
 
 
-class zb_api:
+class ZB:
 
     def __init__(self, mykey, mysecret):
         self.mykey = mykey
@@ -119,10 +120,16 @@ class zb_api:
         return obj
 
 
+def test_api():
+    key, secret = load_api_key('zb')
+    api = ZB(key, secret)
+    print(api.trades())
+
+
 if __name__ == '__main__':
     access_key = 'access_key'
     access_secret = 'access_secret'
 
-    api = zb_api(access_key, access_secret)
+    api = ZB(access_key, access_secret)
 
     print(api.query_account())
