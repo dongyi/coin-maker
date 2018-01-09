@@ -63,6 +63,8 @@
 
 - binance
 
+- zb
+
 
 ## technical analyse 技术分析
 
