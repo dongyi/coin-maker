@@ -51,9 +51,9 @@ def find_breakout_and_trade(p, exchange):
         else:
             cny_price = cpx * latest_btc * 6.5
         if df['higher'].tail(5).tolist()[::-1] == [True, False, False, False, False]:
-            print(green("[{}] {} breakout up at price {}".format(now_dt, p, cny_price)))
+            print(green("[{}] {} breakout up at price {}".format(now_dt, p, cpx)))
         if df['higher'].tail(5).tolist()[::-1] == [False, True, True, True, True]:
-            print(red("[{}] {} breakout down at price {}".format(now_dt, p, cny_price)))
+            print(red("[{}] {} breakout down at price {}".format(now_dt, p, cpx)))
 
         ohlc_df = pd.DataFrame(ohlc)
         ohlc_df['local_tm'] = ohlc_df['timestamp'].apply(lambda x: dateutil.parser.parse(x) + datetime.timedelta(hours=8))
