@@ -32,7 +32,8 @@ def retry_call(n):
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
-                    print("[error retry] {} {}".format(e, traceback.format_exc()))
+                    detail = traceback.format_exc() if n == 0 else ''
+                    print("[error retry] {} {}".format(e, detail))
                     time.sleep(n)
             raise Exception('[retry giveup]')
         return wrap_func
