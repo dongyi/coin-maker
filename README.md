@@ -98,6 +98,6 @@
  
  `3MbdGbkcN834o4WnoCa6QEDrDg72GSmZ72`
  
-- 以太坊乞讨 (eth address
+- 以太坊乞讨 (eth address):
 
  `0x1863fA0683DAe31C1D6Ca068237bCD228D4a4881`
