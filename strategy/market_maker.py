@@ -49,6 +49,28 @@ function onTick() {
     Sleep(sleeptime);
 }
 """
+from lib.util import fail_default
+from lib.util import red, green
+from lib.util import human_format
+
+from exchange.bittrex import Bittrex
+
+from exchange.data_proxy import DataProxy
+
+import datetime
+import dateutil.parser
+import time
+import pandas as pd
+import gevent
+from gevent import monkey
+
+monkey.patch_time()
+monkey.patch_socket()
+monkey.patch_signal()
+monkey.patch_os()
+
+monkey.patch_dns()
+monkey.patch_sys()
 
 from exchange.data_proxy import DataProxy
 
@@ -70,3 +92,61 @@ def on_tick(pair, exchange):
         my_sell_order += 10
         my_buy_order -= 10
 
+
+def maker(p, exchange):
+    while True:
+        data_api = DataProxy(exchange)
+        ob = data_api.order_books(p, 10)
+        assert ob['success']
+        best_buy_price = ob['result']['buy'][0]['Rate']
+        best_sell_price = ob['result']['sell'][0]['Rate']
+        market_width = abs((best_buy_price - best_sell_price) / (best_buy_price + best_sell_price) / 2.0) * 100
+        if market_width > 5:
+            print("ERROR: market width is too wide, will not place orders")
+            time.sleep(30)
+            continue
+        midmarket = (best_buy_price + best_sell_price) / 2.0
+        print(p, market_width, "mid price: ", midmarket)
+
+        """
+        es.printOrderBook()
+        es.printTrades()
+
+        ordersPerSide = 1
+        sellOrdersToPlace = ordersPerSide - len(es.my_orders_sells)
+        sellVolumeToPlace = 1
+        buyOrdersToPlace = ordersPerSide - len(es.my_orders_buys)
+        buyVolumeToPlace = 1
+        expires = es.getBlockNumber() + 10
+
+        marginfactor = 0.25
+
+        # Create sell orders
+        for sellordernr in range(1, sellOrdersToPlace + 1):
+            price = midmarket + sellordernr * midmarket * marginfactor
+            amount = sellVolumeToPlace / sellOrdersToPlace
+            order = es.createOrder('sell', expires, price, amount, token, userAccount, user_wallet_private_key)
+            es.send_message(order)
+
+        # Create buy orders
+        for buyordernr in range(1, buyOrdersToPlace + 1):
+            price = midmarket - buyordernr * midmarket * marginfactor
+            amount = float(buyVolumeToPlace) / float(price) / float(buyOrdersToPlace)
+            order = es.createOrder('buy', expires, price, amount, token, userAccount, user_wallet_private_key)
+            es.send_message(order)
+
+        print("Printing the user's order book every 30 seconds...")
+        while True:
+            es.printMyOrderBook()
+            time.sleep(30)
+        """
+        time.sleep(30)
+
+
+def run_robot(exchange):
+    pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-SC']
+    l = []
+    for p in pairs:
+        l.append(gevent.spawn(maker, p, exchange))
+
+    gevent.joinall(l)

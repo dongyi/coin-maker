@@ -113,13 +113,10 @@ def watch_laplace_indicator(pair, exchange):
 
 
 @click.command()
-@click.option('--pair', prompt='trade pair')
 @click.option('--exchange', prompt='exchange name')
-def market_maker(pair, exchange):
-    from strategy.market_maker import on_tick
-    while True:
-        on_tick(pair, exchange)
-        time.sleep(30)
+def market_maker(exchange):
+    from strategy.market_maker import run_robot
+    run_robot(exchange)
 
 
 @click.command()
