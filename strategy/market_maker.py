@@ -98,8 +98,18 @@ def maker(p, exchange):
         data_api = DataProxy(exchange)
         ob = data_api.order_books(p, 10)
         assert ob['success']
-        best_buy_price = ob['result']['buy'][0]['Rate']
-        best_sell_price = ob['result']['sell'][0]['Rate']
+        #best_buy_price = ob['result']['buy'][0]['Rate']
+        #best_sell_price = ob['result']['sell'][0]['Rate']
+        buy_df = pd.DataFrame(ob['result']['buy'])
+        sell_df = pd.DataFrame(ob['result']['sell'])
+        # filter avg price out of 3 sd
+        buy_df['total'] = buy_df['Rate'] * buy_df['Quantity']
+        buy_df['avg_rate'] = buy_df['total'].sum() / buy_df['Quantity'].sum()
+        sell_df['total'] = sell_df['Rate'] * sell_df['Quantity']
+        sell_df['avg_rate'] = sell_df['total'].sum() / sell_df['Quantity'].sum()
+        best_buy_price = buy_df[buy_df['avg_rate'] < buy_df['avg_rate'].mean() + buy_df['avg_rate'].std() * 3].sort_values('avg_rate', ascending=False)['avg_rate'].tolist()[0]
+        best_sell_price = sell_df[sell_df['avg_rate'] > sell_df['avg_rate'].mean() - sell_df['avg_rate'].std() * 3].sort_values('avg_rate')['avg_rate'].tolist()[0]
+
         market_width = abs((best_buy_price - best_sell_price) / (best_buy_price + best_sell_price) / 2.0) * 100
         if market_width > 5:
             print("ERROR: market width is too wide, will not place orders")
