@@ -93,15 +93,15 @@ def on_tick(pair, exchange):
         my_buy_order -= 10
 
 
-def maker(p, exchange):
+def maker(pair, exchange):
     while True:
         data_api = DataProxy(exchange)
-        ob = data_api.order_books(p, 10)
+        ob = data_api.order_books(pair, 10)
         assert ob['success']
-        #best_buy_price = ob['result']['buy'][0]['Rate']
-        #best_sell_price = ob['result']['sell'][0]['Rate']
+
         buy_df = pd.DataFrame(ob['result']['buy'])
         sell_df = pd.DataFrame(ob['result']['sell'])
+
         # filter avg price out of 3 sd
         buy_df['total'] = buy_df['Rate'] * buy_df['Quantity']
         buy_df['avg_rate'] = buy_df['total'].sum() / buy_df['Quantity'].sum()
@@ -112,11 +112,11 @@ def maker(p, exchange):
 
         market_width = abs((best_buy_price - best_sell_price) / (best_buy_price + best_sell_price) / 2.0) * 100
         if market_width > 5:
-            print("ERROR: market width is too wide, will not place orders")
+            print(pair, "ERROR: market width is too wide, will not place orders")
             time.sleep(30)
             continue
         midmarket = (best_buy_price + best_sell_price) / 2.0
-        print(p, market_width, "mid price: ", midmarket)
+        print(pair, market_width, "mid price: ", midmarket)
 
         """
         es.printOrderBook()
@@ -155,6 +155,7 @@ def maker(p, exchange):
 
 def run_robot(exchange):
     pairs = ['USDT-BTC', 'BTC-1ST', 'BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-BCC', 'BTC-SC']
+    pairs = ['BTC-1ST']
     l = []
     for p in pairs:
         l.append(gevent.spawn(maker, p, exchange))
