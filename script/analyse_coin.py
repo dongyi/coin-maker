@@ -5,8 +5,8 @@ import json
 # import seaborn
 
 import datetime
-import talib
-import scipy.stats
+#import talib
+#import scipy.stats
 
 from functools import lru_cache
 from itertools import combinations
@@ -21,12 +21,29 @@ def get_coin_list(limit=20):
 
 @lru_cache(2 ** 32)
 def get_price(coin_name):
-    url = "https://graphs2.coinmarketcap.com/currencies/{}".format(coin_name)
+    url = "https://graphs2.coinmarketcap.com/currencies/{}/1504115174203/1517904841000/".format(coin_name)
+
+    print(url)
     body = requests.get(url).text
     struct = json.loads(body)
     price_series = pd.DataFrame(
         [{'price': i[1], 'date': datetime.datetime.fromtimestamp(i[0] / 1000)} for i in struct['price_usd']])
     return price_series
+
+
+def get_total_df():
+    coin_list = ['bitcoin', 'ethereum', 'ethereum-classic', 'golem-network-tokens', 'zcash',
+                 'bitshares', 'digixdao', 'siacoin', 'firstblood', 'ripple', 'neo', 'litecoin', 'dash', 'monero']
+    df_list = []
+    for c in coin_list:
+        print("fetch {}".format(c))
+        price_usd = get_price(c)
+        df_list.append(pd.DataFrame(price_usd))
+    total = pd.concat(df_list, axis=1)
+    total.to_csv('total_crypto.csv')
+
+
+
 
 
 def compute_all():
@@ -53,6 +70,5 @@ def compute_all():
 
 
 if __name__ == '__main__':
-    compute_all()
-    # cl = get_coin_list(50)
+    get_total_df()
     # print(cl)
