@@ -13,7 +13,7 @@ from itertools import combinations
 
 
 def get_coin_list(limit=20):
-    url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
+    url = "https://s2.coinmarketcap.com/generated/search/quick_search.json"
     struct = json.loads(requests.get(url).text)
     coin_list = [i['slug'] for i in struct[:limit]]
     return coin_list
@@ -21,7 +21,7 @@ def get_coin_list(limit=20):
 
 @lru_cache(2 ** 32)
 def get_price(coin_name):
-    url = "https://graphs.coinmarketcap.com/currencies/{}".format(coin_name)
+    url = "https://graphs2.coinmarketcap.com/currencies/{}".format(coin_name)
     body = requests.get(url).text
     struct = json.loads(body)
     price_series = pd.DataFrame(
