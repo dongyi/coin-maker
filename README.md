@@ -65,6 +65,7 @@
 
 - zb
 
+- cointiger
 
 ## technical analyse 技术分析
 
