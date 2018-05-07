@@ -60,7 +60,6 @@ class CoinTiger:
 
     def post(self, entry, args=None):
         """
-
         :param entry:
         :param args:
         :return:
@@ -72,6 +71,19 @@ class CoinTiger:
         args['api_key'] = self.api_key
 
         return json.loads(requests.post(entry, data=args).text)
+
+    def delete(self, entry, args=None):
+        """
+        :param entry:
+        :param args:
+        :return:
+        """
+        if 'time' not in args:
+            args['time'] = int(time.time() * 1000)
+        args['sign'] = self.sign(args)
+        args['api_key'] = self.api_key
+
+        return json.loads(requests.delete(entry, data=args).text)
 
     def get(self, entry, args=None):
         """
@@ -87,7 +99,6 @@ class CoinTiger:
         args['api_key'] = self.api_key
         req_args = '&'.join(['{}={}'.format(k, v) for k, v in args.items()])
         req_url = entry + '?' + req_args
-        print(req_url)
         return json.loads(requests.get(req_url).text)
 
     def get_balance(self, coin=None):
@@ -121,5 +132,23 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
-    def order(self):
-        pass
+    def order(self, side, order_type, volume, capital_password, price, symbol):
+        req_entry = TRADING_URL + '/order'
+        options = {'side': side,
+                   'type': order_type,
+                   'volume': volume,
+                   'capital_password': capital_password,
+                   'price': price,
+                   'symbol': symbol}
+        ret = self.post(req_entry, options)
+        assert ret['code'] == '0', ret
+        return ret['data']['order_id']
+
+    def cancel_order(self, order_id, symbol):
+        req_entry = TRADING_URL + '/order'
+        options = {
+            'order_id': order_id,
+            'symbol': symbol
+        }
+        ret = self.delete(req_entry, options)
+        assert ret['code'] == '0', ret

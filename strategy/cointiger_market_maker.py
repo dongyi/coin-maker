@@ -1,6 +1,6 @@
 import random
 import time
-import gevent
+
 
 from lib.util import *
 from exchange.cointiger import CoinTiger
@@ -27,4 +27,6 @@ def run():
         if fail then cancel orders and wait next loop
         
         """
+        print('eth:', ct.get_balance('eth'))
+        print('eos:', ct.get_balance('eos'))
         time.sleep(10)

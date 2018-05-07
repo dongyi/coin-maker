@@ -130,11 +130,9 @@ def custom_strategy(exchange):
 
 
 @click.command()
-@click.option('--exchange', prompt='exchange name')
-def cointiger_market_maker(exchange):
-    from exchange.cointiger import CoinTiger
-    ct = CoinTiger(*load_api_key(exchange))
-    print(ct.get_orderbook('ethbtc'))
+def cointiger_market_maker():
+    from strategy.cointiger_market_maker import run
+    run()
 
 
 cli.add_command(collect_trades)
