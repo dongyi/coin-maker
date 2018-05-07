@@ -2,7 +2,10 @@ import click
 
 from lib.util import *
 
-from ta.indicators import *
+try:
+    from ta.indicators import *
+except ImportError as e:
+    print("no talib support")
 
 from exchange.bittrex import Bittrex
 
@@ -126,6 +129,14 @@ def custom_strategy(exchange):
     runner(exchange)
 
 
+@click.command()
+@click.option('--exchange', prompt='exchange name')
+def cointiger_market_maker(exchange):
+    from exchange.cointiger import CoinTiger
+    ct = CoinTiger(*load_api_key(exchange))
+    print(ct.get_balance())
+
+
 cli.add_command(collect_trades)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
@@ -134,6 +145,8 @@ cli.add_command(plot_ether_transactions)
 cli.add_command(watch_laplace_indicator)
 cli.add_command(market_maker)
 cli.add_command(custom_strategy)
+cli.add_command(cointiger_market_maker)
+
 
 if __name__ == "__main__":
     cli()

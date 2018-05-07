@@ -87,7 +87,7 @@ green = lambda x: use_style(x, fore='green')
 
 
 def load_api_key(exchange_name):
-    with open("secrets.json") as secrets_file:
+    with open("lib/secrets.json") as secrets_file:
         secrets = json.load(secrets_file)
         secrets_file.close()
         apikey, secretkey = secrets[exchange_name]['api_key'], secrets[exchange_name]['secret_key']
