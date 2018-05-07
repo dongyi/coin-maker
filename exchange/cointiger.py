@@ -98,15 +98,20 @@ class CoinTiger:
         total_balance = ret['data']
         return total_balance if coin is None else [i for i in total_balance if i['coin'] == coin]
 
-    def get_order_history(self, market, count):
-        pass
+    def get_order_history(self, market):
+        req_entry = TRADING_URL + '/order/history'
+        options = {'symbol': market}
+
+        ret = self.get(req_entry, options)
+        assert ret['code'] == '0', ret
+        return ret['data']
 
     def get_order_trade(self, market):
         req_entry = TRADING_URL + '/order/new'
         options = {'symbol': market}
 
         ret = self.get(req_entry, options)
-        assert ret['code'] == '0'
+        assert ret['code'] == '0', ret
         return ret['data']
 
     def get_orderbook(self, market):
