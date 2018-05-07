@@ -134,7 +134,7 @@ def custom_strategy(exchange):
 def cointiger_market_maker(exchange):
     from exchange.cointiger import CoinTiger
     ct = CoinTiger(*load_api_key(exchange))
-    print(ct.get_balance())
+    print(ct.get_orderbook('ethbtc'))
 
 
 cli.add_command(collect_trades)

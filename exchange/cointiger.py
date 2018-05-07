@@ -54,9 +54,24 @@ class CoinTiger:
 
         pdata = (sorted_args_txt + self.api_secret).encode()
 
-        apisign2 = hmac.new(self.api_secret.encode("utf-8"), pdata, hashlib.sha512).hexdigest()
+        apisign = hmac.new(self.api_secret.encode("utf-8"), pdata, hashlib.sha512).hexdigest()
 
-        return apisign2
+        return apisign
+
+    def post(self, entry, args=None):
+        """
+
+        :param entry:
+        :param args:
+        :return:
+        """
+        if 'time' not in args:
+            args['time'] = int(time.time() * 1000)
+
+        args['sign'] = self.sign(args)
+        args['api_key'] = self.api_key
+
+        return json.loads(requests.post(entry, data=args).text)
 
     def get(self, entry, args=None):
         """
@@ -72,25 +87,34 @@ class CoinTiger:
         args['api_key'] = self.api_key
         req_args = '&'.join(['{}={}'.format(k, v) for k, v in args.items()])
         req_url = entry + '?' + req_args
-
+        print(req_url)
         return json.loads(requests.get(req_url).text)
 
     def get_balance(self, coin=None):
         req_entry = TRADING_URL + '/user/balance'
-        option = {}
-        ret = self.get(req_entry, option)
-        assert ret['code'] == '0'
+        options = {}
+        ret = self.get(req_entry, options)
+        assert ret['code'] == '0', ret
         total_balance = ret['data']
         return total_balance if coin is None else [i for i in total_balance if i['coin'] == coin]
 
     def get_order_history(self, market, count):
         pass
 
-    def get_order_trade(self):
-        pass
+    def get_order_trade(self, market):
+        req_entry = TRADING_URL + '/order/new'
+        options = {'symbol': market}
 
-    def get_orderbook(self, market, depth_type, depth=20):
-        pass
+        ret = self.get(req_entry, options)
+        assert ret['code'] == '0'
+        return ret['data']
+
+    def get_orderbook(self, market):
+        req_entry = MARKET_URL + '/depth'
+        options = {'symbol': market, 'type': 'step1'}
+        ret = self.get(req_entry, options)
+        assert ret['code'] == '0', ret
+        return ret['data']
 
     def order(self):
         pass
