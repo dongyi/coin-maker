@@ -117,9 +117,11 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
-    def get_order_trade(self, market):
+    def get_order_trade(self, market, offset, limit):
         req_entry = TRADING_URL + '/order/new'
-        options = {'symbol': market}
+        options = {'symbol': market,
+                   'offset': offset,
+                   'limit': limit}
 
         ret = self.get(req_entry, options)
         assert ret['code'] == '0', ret

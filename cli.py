@@ -131,8 +131,9 @@ def custom_strategy(exchange):
 
 @click.command()
 def cointiger_market_maker():
-    from strategy.cointiger_market_maker import run
-    run()
+    from strategy.cointiger_market_maker import run, test
+    #run()
+    test()
 
 
 cli.add_command(collect_trades)
