@@ -26,6 +26,7 @@ class Bots:
     def strategy_ctrl(self, cmd):
         if cmd == 'start':
             self.set_status('run')
+            self.run()
         elif cmd == 'pause':
             self.set_status('suspend')
         elif cmd == 'stop':

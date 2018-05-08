@@ -101,6 +101,7 @@ class CoinTiger:
         req_url = entry + '?' + req_args
         return json.loads(requests.get(req_url).text)
 
+    @retry_call(3)
     def get_balance(self, coin=None):
         req_entry = TRADING_URL + '/user/balance'
         options = {}
@@ -109,6 +110,7 @@ class CoinTiger:
         total_balance = ret['data']
         return total_balance if coin is None else [i for i in total_balance if i['coin'] == coin]
 
+    @retry_call(3)
     def get_order_history(self, market, offset, limit):
         """
         自己的委托历史
@@ -126,6 +128,7 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @retry_call(3)
     def get_trade_history(self, market, offset, limit):
         """
         自己有成交的订单
@@ -140,6 +143,7 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @retry_call(3)
     def get_order_trade(self, market, offset, limit):
         req_entry = TRADING_URL + '/order/new'
         options = {'symbol': market,
@@ -150,6 +154,7 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @retry_call(3)
     def get_orderbook(self, market):
         req_entry = MARKET_URL + '/depth'
         options = {'symbol': market, 'type': 'step1'}
@@ -157,6 +162,7 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @fail_default('can not order now')
     def order(self, side, order_type, volume, capital_password, price, symbol):
         req_entry = TRADING_URL + '/order'
         options = {'side': side,
@@ -169,6 +175,7 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']['order_id']
 
+    @fail_default('can not cancel order now')
     def cancel_order(self, order_id, symbol):
         req_entry = TRADING_URL + '/order'
         options = {
