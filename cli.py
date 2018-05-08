@@ -131,9 +131,10 @@ def custom_strategy(exchange):
 
 @click.command()
 def cointiger_market_maker():
-    from strategy.cointiger_market_maker import run, test
+    from strategy.cointiger_market_maker import Bots
     #run()
-    test()
+    capital_password = input('capital_password')
+    Bots(base_coin='eth', target_coin='eos', capital_password=capital_password).test()
 
 
 cli.add_command(collect_trades)
