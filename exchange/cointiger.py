@@ -82,7 +82,7 @@ class CoinTiger:
             args['time'] = int(time.time() * 1000)
         args['sign'] = self.sign(args)
         args['api_key'] = self.api_key
-
+        print(args)
         return json.loads(requests.delete(entry, data=args).text)
 
     def get(self, entry, args=None):
@@ -109,17 +109,42 @@ class CoinTiger:
         total_balance = ret['data']
         return total_balance if coin is None else [i for i in total_balance if i['coin'] == coin]
 
-    def get_order_history(self, market):
+    def get_order_history(self, market, offset, limit):
+        """
+        自己的委托历史
+        :param market:
+        :param offset:
+        :param limit:
+        :return:
+        """
         req_entry = TRADING_URL + '/order/history'
-        options = {'symbol': market}
+        options = {'symbol': market,
+                   'offset': offset,
+                   'limit': limit}
 
         ret = self.get(req_entry, options)
         assert ret['code'] == '0', ret
         return ret['data']
 
-    def get_order_trade(self, market):
+    def get_trade_history(self, market, offset, limit):
+        """
+        自己有成交的订单
+        :return:
+        """
+        req_entry = TRADING_URL + '/order/trade '
+        options = {'symbol': market,
+                   'offset': offset,
+                   'limit': limit}
+
+        ret = self.get(req_entry, options)
+        assert ret['code'] == '0', ret
+        return ret['data']
+
+    def get_order_trade(self, market, offset, limit):
         req_entry = TRADING_URL + '/order/new'
-        options = {'symbol': market}
+        options = {'symbol': market,
+                   'offset': offset,
+                   'limit': limit}
 
         ret = self.get(req_entry, options)
         assert ret['code'] == '0', ret
