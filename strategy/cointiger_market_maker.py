@@ -3,6 +3,7 @@ import time
 import numpy as np
 import pandas as pd
 
+from lib.persist import get_db_engine
 from lib.util import *
 from exchange.cointiger import CoinTiger
 
@@ -20,9 +21,24 @@ class Bots:
         self.vol_max = vol_max
         self.vol_min = vol_min
         self.trader_id = trader_id
+        self.status = 'halt'
 
-    def strategy_ctrl(self):
-        pass
+    def strategy_ctrl(self, cmd):
+        if cmd == 'start':
+            self.set_status('run')
+        elif cmd == 'pause':
+            self.set_status('suspend')
+        elif cmd == 'stop':
+            self.set_status('halt')
+        else:
+            raise Exception("no such cmd")
+
+    def set_status(self, new_status):
+        assert new_status in ['halt', 'suspend', 'run']
+        self.status = new_status
+
+    def get_status(self):
+        return self.status
 
     def test(self, test_type='order_history'):
         if test_type == 'order_and_cancel':
@@ -69,6 +85,7 @@ class Bots:
             df[to_fix] = df[to_fix].apply(lambda x: json.loads(x)['amount'])
         df['trader_id'] = self.trader_id
         df.to_csv('trade_history.csv')
+        df.to_sql('trade_record', con=get_db_engine(''), if_exists='append', index=False)
 
     def notify(self, msg):
         pass
@@ -78,7 +95,11 @@ class Bots:
 
     def run(self):
         while True:
-
+            if self.status == 'halt':
+                break
+            if self.status == 'suspend':
+                time.sleep(1)
+                continue
             current_loop_fund = self.vol_min + (self.vol_max - self.vol_min) * random.random()
 
             current_base_coin_balance = self.api_client.get_balance(self.base_coin)
