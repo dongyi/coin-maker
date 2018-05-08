@@ -2,14 +2,13 @@ import random
 import time
 import numpy as np
 
-
 from lib.util import *
 from exchange.cointiger import CoinTiger
 
 
 class Bots:
     def __init__(self, base_coin, target_coin, capital_password,
-                 interval_max=60*5, interval_min=60, vol_max=10, vol_min=1):
+                 interval_max=60 * 5, interval_min=60, vol_max=10, vol_min=1):
         self.base_coin = base_coin
         self.target_coin = target_coin
         self.capital_password = capital_password
@@ -26,12 +25,12 @@ class Bots:
     def test(self, test_type='order_and_cancel'):
         if test_type == 'order_and_cancel':
             order_id = self.api_client.order(side='BUY', order_type=1, volume=0.1,
-                    capital_password=self.capital_password, price=0.01,
-                    symbol='eoseth')
+                                             capital_password=self.capital_password, price=0.01,
+                                             symbol='eoseth')
             print(order_id)
             time.sleep(2)
 
-            #self.api_client.cancel_order(order_id, self.trade_pair)
+            self.api_client.cancel_order(order_id, self.trade_pair)
             print(self.api_client.get_order_trade(self.trade_pair, offset=1, limit=10))
             """
             {'offset': 0, 'limit': 10, 'count': 1, 'list':
@@ -90,12 +89,12 @@ class Bots:
 
             # place buy and sell orders
             buy_order_id = self.api_client.order(side='BUY', order_type=1, volume=current_loop_fund,
-                                  capital_password=self.capital_password, price=my_price,
-                                  symbol=self.trade_pair)
+                                                 capital_password=self.capital_password, price=my_price,
+                                                 symbol=self.trade_pair)
 
             sell_order_id = self.api_client.order(side='SELL', order_type=1, volume=current_loop_fund,
-                                  capital_password=self.capital_password, price=my_price,
-                                  symbol=self.trade_pair)
+                                                  capital_password=self.capital_password, price=my_price,
+                                                  symbol=self.trade_pair)
 
             # check remain orders
             current_open_orders = self.api_client.get_order_trade(self.trade_pair, 1, 10)

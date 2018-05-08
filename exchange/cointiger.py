@@ -82,7 +82,7 @@ class CoinTiger:
             args['time'] = int(time.time() * 1000)
         args['sign'] = self.sign(args)
         args['api_key'] = self.api_key
-
+        print(args)
         return json.loads(requests.delete(entry, data=args).text)
 
     def get(self, entry, args=None):

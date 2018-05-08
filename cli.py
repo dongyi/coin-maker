@@ -133,7 +133,7 @@ def custom_strategy(exchange):
 def cointiger_market_maker():
     from strategy.cointiger_market_maker import Bots
     #run()
-    capital_password = input('capital_password')
+    capital_password = input('capital_password ==>\n')
     Bots(base_coin='eth', target_coin='eos', capital_password=capital_password).test()
 
 
