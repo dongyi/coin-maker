@@ -65,7 +65,9 @@ class Bots:
                 break
             df = df.append(pd.DataFrame(trade_history['list']))
             offset += batch_limit
-
+        for to_fix in ['deal_price', 'price', 'volume']:
+            df[to_fix] = df[to_fix].apply(lambda x: json.loads(x)['amount'])
+        df['trader_id'] = self.trader_id
         df.to_csv('trade_history.csv')
 
     def notify(self, msg):
