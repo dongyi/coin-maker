@@ -54,6 +54,9 @@ class Bots:
     def notify(self, msg):
         pass
 
+    def record_order(self, content_obj):
+        print("record order:", content_obj)
+
     def run(self):
         while True:
 
@@ -86,16 +89,31 @@ class Bots:
             my_price = (bid_price1 + ask_price1) / 2
 
             # place buy and sell orders
-            buy_order = self.api_client.order(side='BUY', order_type=1, volume=current_loop_fund,
+            buy_order_id = self.api_client.order(side='BUY', order_type=1, volume=current_loop_fund,
                                   capital_password=self.capital_password, price=my_price,
                                   symbol=self.trade_pair)
 
-            sell_order = self.api_client.order(side='SELL', order_type=1, volume=current_loop_fund,
+            sell_order_id = self.api_client.order(side='SELL', order_type=1, volume=current_loop_fund,
                                   capital_password=self.capital_password, price=my_price,
                                   symbol=self.trade_pair)
 
             # check remain orders
             current_open_orders = self.api_client.get_order_trade(self.trade_pair, 1, 10)
+            if current_open_orders['count'] > 0:
+                remain_open_orders = current_open_orders['list']
+                for open_order in remain_open_orders:
+                    order_id = open_order['id']
+                    assert order_id in [buy_order_id, sell_order_id]
+                    trade_side = 'BUY' if order_id == sell_order_id else 'SELL'
+                    record_obj = {'side': trade_side,
+                                  'base': self.base_coin,
+                                  'target': self.target_coin,
+                                  'price': my_price,
+                                  'volume': current_loop_fund,
+                                  'ts': int(time.time())
+                                  }
+                    self.record_order(record_obj)
+                    self.api_client.cancel_order(order_id=open_order['id'], symbol=self.trade_pair)
 
             # sleep till next loop
             interval = random.randint(self.interval_min, self.interval_max)
