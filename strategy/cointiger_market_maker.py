@@ -1,13 +1,14 @@
 import random
 import time
 import numpy as np
+import pandas as pd
 
 from lib.util import *
 from exchange.cointiger import CoinTiger
 
 
 class Bots:
-    def __init__(self, base_coin, target_coin, capital_password,
+    def __init__(self, base_coin, target_coin, capital_password, trader_id,
                  interval_max=60 * 5, interval_min=60, vol_max=10, vol_min=1):
         self.base_coin = base_coin
         self.target_coin = target_coin
@@ -18,17 +19,18 @@ class Bots:
         self.interval_min = interval_min
         self.vol_max = vol_max
         self.vol_min = vol_min
+        self.trader_id = trader_id
 
     def strategy_ctrl(self):
         pass
 
-    def test(self, test_type='order_and_cancel'):
+    def test(self, test_type='order_history'):
         if test_type == 'order_and_cancel':
             order_id = self.api_client.order(side='BUY', order_type=1, volume=0.1,
                                              capital_password=self.capital_password, price=0.01,
-                                             symbol='eoseth')
+                                             symbol=self.trade_pair)
             print(order_id)
-            time.sleep(2)
+            time.sleep(20)
 
             self.api_client.cancel_order(order_id, self.trade_pair)
             print(self.api_client.get_order_trade(self.trade_pair, offset=1, limit=10))
@@ -49,6 +51,22 @@ class Bots:
             orderbook_list = self.api_client.get_orderbook(self.trade_pair)
             bid_price1, bid_vol1 = orderbook_list['depth_data']['tick']['buys'][0]
             ask_price1, ask_vol1 = orderbook_list['depth_data']['tick']['asks'][0]
+
+        if test_type == 'order_history':
+            self.sync_trade_history()
+
+    def sync_trade_history(self):
+        batch_limit = 10
+        offset = 1
+        df = pd.DataFrame([])
+        while True:
+            trade_history = self.api_client.get_trade_history(self.trade_pair, offset, batch_limit)
+            if len(trade_history['list']) == 0:
+                break
+            df = df.append(pd.DataFrame(trade_history['list']))
+            offset += batch_limit
+
+        df.to_csv('trade_history.csv')
 
     def notify(self, msg):
         pass

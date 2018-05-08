@@ -109,9 +109,32 @@ class CoinTiger:
         total_balance = ret['data']
         return total_balance if coin is None else [i for i in total_balance if i['coin'] == coin]
 
-    def get_order_history(self, market):
+    def get_order_history(self, market, offset, limit):
+        """
+        自己的委托历史
+        :param market:
+        :param offset:
+        :param limit:
+        :return:
+        """
         req_entry = TRADING_URL + '/order/history'
-        options = {'symbol': market}
+        options = {'symbol': market,
+                   'offset': offset,
+                   'limit': limit}
+
+        ret = self.get(req_entry, options)
+        assert ret['code'] == '0', ret
+        return ret['data']
+
+    def get_trade_history(self, market, offset, limit):
+        """
+        自己有成交的订单
+        :return:
+        """
+        req_entry = TRADING_URL + '/order/trade '
+        options = {'symbol': market,
+                   'offset': offset,
+                   'limit': limit}
 
         ret = self.get(req_entry, options)
         assert ret['code'] == '0', ret
