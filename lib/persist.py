@@ -10,4 +10,4 @@ def get_db_engine(connect_str):
 
 
 def sql_to_df(sql):
-    engine = get_db_engine('')
+    engine = get_db_engine('mysql+pymysql://<username>:<password>@<host>/<dbname>[?<options>]')

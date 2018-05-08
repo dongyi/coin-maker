@@ -60,8 +60,8 @@ class CoinTiger:
 
     def post(self, entry, args=None):
         """
-        :param entry:
-        :param args:
+        :param entry: 请求地址
+        :param args:  请求参数
         :return:
         """
         if 'time' not in args:
@@ -74,8 +74,8 @@ class CoinTiger:
 
     def delete(self, entry, args=None):
         """
-        :param entry:
-        :param args:
+        :param entry: 请求地址
+        :param args:  请求参数
         :return:
         """
         if 'time' not in args:
@@ -88,8 +88,8 @@ class CoinTiger:
     def get(self, entry, args=None):
         """
         Queries CoinTiger with given method and options
-        :param method:
-        :param option:
+        :param method: 请求地址
+        :param option: 请求参数
         :return:
         """
         if 'time' not in args:
@@ -101,7 +101,13 @@ class CoinTiger:
         req_url = entry + '?' + req_args
         return json.loads(requests.get(req_url).text)
 
+    @retry_call(3)
     def get_balance(self, coin=None):
+        """
+        获取账户余额
+        :param coin: 交易对，不传就是返回全部余额
+        :return:
+        """
         req_entry = TRADING_URL + '/user/balance'
         options = {}
         ret = self.get(req_entry, options)
@@ -109,12 +115,13 @@ class CoinTiger:
         total_balance = ret['data']
         return total_balance if coin is None else [i for i in total_balance if i['coin'] == coin]
 
+    @retry_call(3)
     def get_order_history(self, market, offset, limit):
         """
         自己的委托历史
-        :param market:
-        :param offset:
-        :param limit:
+        :param market: 交易对
+        :param offset: 起始
+        :param limit:  返回条目数
         :return:
         """
         req_entry = TRADING_URL + '/order/history'
@@ -126,9 +133,13 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @retry_call(3)
     def get_trade_history(self, market, offset, limit):
         """
         自己有成交的订单
+        :param market: 交易对
+        :param offset: 起始
+        :param limit:  返回条目数
         :return:
         """
         req_entry = TRADING_URL + '/order/trade '
@@ -140,7 +151,15 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @retry_call(3)
     def get_order_trade(self, market, offset, limit):
+        """
+        自己的open orders
+        :param market: 交易对
+        :param offset: 起始
+        :param limit:  返回条目数
+        :return:
+        """
         req_entry = TRADING_URL + '/order/new'
         options = {'symbol': market,
                    'offset': offset,
@@ -150,14 +169,31 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @retry_call(3)
     def get_orderbook(self, market):
+        """
+        交易对当前的orderbook
+        :param market: 交易对
+        :return:
+        """
         req_entry = MARKET_URL + '/depth'
         options = {'symbol': market, 'type': 'step1'}
         ret = self.get(req_entry, options)
         assert ret['code'] == '0', ret
         return ret['data']
 
+    @fail_default('can not order now')
     def order(self, side, order_type, volume, capital_password, price, symbol):
+        """
+        下单
+        :param side:                        开仓方向
+        :param order_type:                  订单类型  1：限价单  2：市价单
+        :param volume:                      订单数量
+        :param capital_password:            资金密码
+        :param price:                       订单价格
+        :param symbol:                      交易对
+        :return:                            订单id
+        """
         req_entry = TRADING_URL + '/order'
         options = {'side': side,
                    'type': order_type,
@@ -169,7 +205,14 @@ class CoinTiger:
         assert ret['code'] == '0', ret
         return ret['data']['order_id']
 
+    @fail_default('can not cancel order now')
     def cancel_order(self, order_id, symbol):
+        """
+        撤单
+        :param order_id:               订单id
+        :param symbol:                 交易对
+        :return:
+        """
         req_entry = TRADING_URL + '/order'
         options = {
             'order_id': order_id,
