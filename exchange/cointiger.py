@@ -196,18 +196,19 @@ class CoinTiger:
         :param capital_password:            资金密码
         :param price:                       订单价格
         :param symbol:                      交易对
-        :return:                            订单id
+        :return:                            订单id / 错误原因
         """
         req_entry = TRADING_URL + '/order'
-        options = {'side': side,
-                   'type': order_type,
-                   'volume': volume,
-                   'capital_password': capital_password,
-                   'price': price,
-                   'symbol': symbol}
+        options = {
+            'side': side,
+            'type': order_type,
+            'volume': volume,
+            'capital_password': capital_password,
+            'price': price,
+            'symbol': symbol
+        }
         ret = self.post(req_entry, options)
-        assert ret['code'] == '0', ret
-        return ret['data']['order_id']
+        return ret
 
     @fail_default('can not cancel order now')
     def cancel_order(self, order_id, symbol):
@@ -223,4 +224,5 @@ class CoinTiger:
             'symbol': symbol
         }
         ret = self.delete(req_entry, options)
-        assert ret['code'] == '0', ret
+        return ret
+

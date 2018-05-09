@@ -45,9 +45,10 @@ class Bots:
 
     def test(self, test_type='order_and_cancel'):
         if test_type == 'order_and_cancel':
-            order_id = self.api_client.order(side='BUY', order_type=1, volume=0.1,
+            order_ret = self.api_client.order(side='BUY', order_type=1, volume=0.1,
                                              capital_password=self.capital_password, price=0.01,
                                              symbol=self.trade_pair)
+            order_id = order_ret['data']['order_id']
             self.api_client.cancel_order(order_id, self.trade_pair)
             print(self.api_client.get_order_trade(self.trade_pair, offset=1, limit=10))
             """
@@ -114,7 +115,10 @@ class Bots:
             if self.status == 'suspend':
                 time.sleep(1)
                 continue
-            current_loop_fund = self.vol_min + (self.vol_max - self.vol_min) * random.random()
+            current_loop_fund_percetage = random.random() / 10
+            current_loop_fund = self.vol_min + (self.vol_max - self.vol_min) * current_loop_fund_percetage
+            sleep_interval = random.randint(self.interval_min, self.interval_max)
+
             current_base_coin_balance = float(self.api_client.get_balance(self.base_coin)[0]['normal'])
             current_target_coin_balance = float(self.api_client.get_balance(self.target_coin)[0]['normal'])
 
@@ -139,16 +143,37 @@ class Bots:
             bid_price1, bid_vol1 = orderbook_list['depth_data']['tick']['buys'][0]
             ask_price1, ask_vol1 = orderbook_list['depth_data']['tick']['asks'][0]
 
-            my_price = (float(bid_price1) + float(ask_price1)) / 2
+            price_range_percetage = random.random()
+            my_price = (float(bid_price1) + float(ask_price1)) * price_range_percetage
 
             # place buy and sell orders
-            buy_order_id = self.api_client.order(side='BUY', order_type=1, volume=current_loop_fund,
+            buy_order_ret = self.api_client.order(side='BUY', order_type=1, volume=current_base_coin_balance * current_loop_fund_percetage / my_price,
                                                  capital_password=self.capital_password, price=my_price,
                                                  symbol=self.trade_pair)
 
-            sell_order_id = self.api_client.order(side='SELL', order_type=1, volume=current_loop_fund,
+            sell_order_ret = self.api_client.order(side='SELL', order_type=1, volume=current_base_coin_balance * current_loop_fund_percetage / my_price,
                                                   capital_password=self.capital_password, price=my_price,
                                                   symbol=self.trade_pair)
+
+            if not (buy_order_ret['code'] == '0' and sell_order_ret['code'] == '0'):
+                # fail one or two
+                if buy_order_ret['code'] == '0' and sell_order_ret['code'] != '0':
+                    buy_order_id = buy_order_ret['data']['order_id']
+                    self.api_client.cancel_order(buy_order_id, self.trade_pair)
+                    time.sleep(sleep_interval)
+                    continue
+                if buy_order_ret['code'] != '0' and sell_order_ret['code'] == '0':
+                    sell_order_id = sell_order_ret['data']['order_id']
+                    self.api_client.cancel_order(sell_order_id, self.trade_pair)
+                    time.sleep(sleep_interval)
+                    continue
+                else:
+                    # fail both
+                    time.sleep(sleep_interval)
+                    continue
+            else:
+                buy_order_id = buy_order_ret['data']['order_id']
+                sell_order_id = sell_order_ret['data']['order_id']
 
             # check remain orders
             current_open_orders = self.api_client.get_order_trade(self.trade_pair, 1, 10)
@@ -169,5 +194,4 @@ class Bots:
                     self.api_client.cancel_order(order_id=open_order['id'], symbol=self.trade_pair)
 
             # sleep till next loop
-            interval = random.randint(self.interval_min, self.interval_max)
-            time.sleep(interval)
+            time.sleep(sleep_interval)
