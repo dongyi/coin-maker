@@ -12,7 +12,7 @@ from exchange.cointiger import CoinTiger
 
 class Bots:
     def __init__(self, base_coin, target_coin, capital_password, trader_id,
-                 interval_max=60 * 5, interval_min=60, vol_max=0.002, vol_min=0.001):
+                 interval_max=60 * 2, interval_min=20, vol_max=0.002, vol_min=0.001):
         self.base_coin = base_coin
         self.target_coin = target_coin
         self.capital_password = capital_password
@@ -100,14 +100,26 @@ class Bots:
 
         df = df[df['order_id'] > current_max_order_id]
         if len(df) > 0:
-            df.to_csv('trade_history.csv')
             df.to_sql('trade_record', con=get_db_engine(), if_exists='append', index=False)
 
     def notify(self, msg):
         pass
 
-    def record_order(self, content_obj):
-        wait = input("wait")
+    def record_order(self, content_obj, record_type):
+        """{
+            'side': trade_side,
+            'base': self.base_coin,
+            'target': self.target_coin,
+            'price': my_price,
+            'volume': current_loop_fund,
+            'ts': int(time.time()),
+            'trader_id': self.trader_id
+        }"""
+        if record_type == 'exception':
+            df = pd.DataFrame([content_obj])
+            df.to_sql('trade_exception', con=get_db_engine(), if_exists='append', index=False)
+        if record_type == 'success':
+            pass
         print("record order:", content_obj)
 
     def run(self):
@@ -185,6 +197,7 @@ class Bots:
             else:
                 buy_order_id = buy_order_ret['data']['order_id']
                 sell_order_id = sell_order_ret['data']['order_id']
+
                 print("buy order: {} sell order: {}".format(buy_order_id, sell_order_id))
 
             # check remain orders
@@ -193,19 +206,48 @@ class Bots:
                 remain_open_orders = current_open_orders['list']
                 for open_order in remain_open_orders:
                     order_id = open_order['id']
+                    remain_volume = float(open_order['remain_volume']['amount'])
                     assert order_id in [buy_order_id, sell_order_id]
                     trade_side = 'BUY' if order_id == sell_order_id else 'SELL'
                     record_obj = {
+                        'order_id': order_id,
                         'side': trade_side,
-                        'base': self.base_coin,
-                        'target': self.target_coin,
+                        'base_coin': self.base_coin,
+                        'target_coin': self.target_coin,
                         'price': my_price,
-                        'volume': current_loop_fund,
-                        'ts': int(time.time())
+                        'volume': current_loop_fund - remain_volume,
+                        'timestamp': datetime.datetime.fromtimestamp(time.time()),
+                        'trader_id': self.trader_id
                     }
-                    self.record_order(record_obj)
+                    self.record_order(record_obj, 'exception')
                     self.api_client.cancel_order(order_id=open_order['id'], symbol=self.trade_pair)
-
+            else:
+                price = my_price
+                volume = current_base_coin_balance * current_loop_fund_percetage / my_price
+                record_obj_list = [{
+                    'trader_id': self.trader_id,
+                    'base_coin': self.base_coin,
+                    'target_coin': self.target_coin,
+                    'order_id': buy_order_id,
+                    'side': 'buy',
+                    'deal_price': price * volume,
+                    'timestamp': datetime.datetime.now(),
+                    'volume': volume,
+                    'price': price,
+                }, {
+                    'trader_id': self.trader_id,
+                    'base_coin': self.base_coin,
+                    'target_coin': self.target_coin,
+                    'order_id': sell_order_id,
+                    'side': 'sell',
+                    'deal_price': price * volume,
+                    'timestamp': datetime.datetime.now(),
+                    'volume': volume,
+                    'price': price,
+                }
+                ]
+                df = pd.DataFrame(record_obj_list)
+                df.to_sql('trade_record_realtime', con=get_db_engine(), if_exists='append', index=False)
             # sleep till next loop
             print("next loop in ", sleep_interval)
             time.sleep(sleep_interval)
