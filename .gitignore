@@ -8,3 +8,4 @@ user.*
 .ipynb_checkpoints/
 secrets.json
 myenv/
+settings.py
