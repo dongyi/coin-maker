@@ -134,7 +134,9 @@ def cointiger_market_maker():
     from strategy.cointiger_market_maker import Bots
     #run()
     capital_password = input('capital_password ==>\n')
-    Bots(base_coin='eth', target_coin='eos', capital_password=capital_password, trader_id=1).test()
+    bot = Bots(base_coin='eth', target_coin='eos', capital_password=capital_password, trader_id=1)
+    bot.strategy_ctrl('start')
+    bot.run()
 
 
 cli.add_command(collect_trades)

@@ -12,7 +12,7 @@ from exchange.cointiger import CoinTiger
 
 class Bots:
     def __init__(self, base_coin, target_coin, capital_password, trader_id,
-                 interval_max=60 * 5, interval_min=60, vol_max=10, vol_min=1):
+                 interval_max=60 * 5, interval_min=60, vol_max=0.002, vol_min=0.001):
         self.base_coin = base_coin
         self.target_coin = target_coin
         self.capital_password = capital_password
@@ -48,8 +48,6 @@ class Bots:
             order_id = self.api_client.order(side='BUY', order_type=1, volume=0.1,
                                              capital_password=self.capital_password, price=0.01,
                                              symbol=self.trade_pair)
-            print(order_id)
-
             self.api_client.cancel_order(order_id, self.trade_pair)
             print(self.api_client.get_order_trade(self.trade_pair, offset=1, limit=10))
             """
@@ -117,9 +115,8 @@ class Bots:
                 time.sleep(1)
                 continue
             current_loop_fund = self.vol_min + (self.vol_max - self.vol_min) * random.random()
-
-            current_base_coin_balance = self.api_client.get_balance(self.base_coin)
-            current_target_coin_balance = self.api_client.get_balance(self.target_coin)
+            current_base_coin_balance = float(self.api_client.get_balance(self.base_coin)[0]['normal'])
+            current_target_coin_balance = float(self.api_client.get_balance(self.target_coin)[0]['normal'])
 
             print(self.base_coin, current_base_coin_balance)
             print(self.target_coin, current_target_coin_balance)
@@ -142,7 +139,7 @@ class Bots:
             bid_price1, bid_vol1 = orderbook_list['depth_data']['tick']['buys'][0]
             ask_price1, ask_vol1 = orderbook_list['depth_data']['tick']['asks'][0]
 
-            my_price = (bid_price1 + ask_price1) / 2
+            my_price = (float(bid_price1) + float(ask_price1)) / 2
 
             # place buy and sell orders
             buy_order_id = self.api_client.order(side='BUY', order_type=1, volume=current_loop_fund,
