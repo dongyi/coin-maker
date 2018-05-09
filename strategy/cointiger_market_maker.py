@@ -46,8 +46,8 @@ class Bots:
     def test(self, test_type='order_and_cancel'):
         if test_type == 'order_and_cancel':
             order_ret = self.api_client.order(side='BUY', order_type=1, volume=0.1,
-                                             capital_password=self.capital_password, price=0.01,
-                                             symbol=self.trade_pair)
+                                              capital_password=self.capital_password, price=0.01,
+                                              symbol=self.trade_pair)
             order_id = order_ret['data']['order_id']
             self.api_client.cancel_order(order_id, self.trade_pair)
             print(self.api_client.get_order_trade(self.trade_pair, offset=1, limit=10))
@@ -78,7 +78,8 @@ class Bots:
 
     def sync_trade_history(self):
 
-        current_max_order_id = sql_to_df('select max(order_id) from trade_record where trader_id={}'.format(self.trader_id)).iloc[0, 0]
+        current_max_order_id = \
+            sql_to_df('select max(order_id) from trade_record where trader_id={}'.format(self.trader_id)).iloc[0, 0]
 
         batch_limit = 10
         offset = 1
@@ -95,7 +96,7 @@ class Bots:
         df['base_coin'] = self.base_coin
         df['target_coin'] = self.target_coin
         df.rename(columns={"created_at": "timestamp", "id": "order_id"}, inplace=True)
-        df['timestamp'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(x/1000))
+        df['timestamp'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(x / 1000))
 
         df = df[df['order_id'] > current_max_order_id]
         if len(df) > 0:
@@ -142,18 +143,22 @@ class Bots:
             orderbook_list = self.api_client.get_orderbook(self.trade_pair)
             bid_price1, bid_vol1 = orderbook_list['depth_data']['tick']['buys'][0]
             ask_price1, ask_vol1 = orderbook_list['depth_data']['tick']['asks'][0]
+            bid_price1 = float(bid_price1)
+            ask_price1 = float(ask_price1)
 
             price_range_percetage = random.random()
-            my_price = (float(bid_price1) + float(ask_price1)) * price_range_percetage
+            my_price = (ask_price1 - bid_price1) * price_range_percetage + bid_price1
 
             # place buy and sell orders
-            buy_order_ret = self.api_client.order(side='BUY', order_type=1, volume=current_base_coin_balance * current_loop_fund_percetage / my_price,
-                                                 capital_password=self.capital_password, price=my_price,
-                                                 symbol=self.trade_pair)
-
-            sell_order_ret = self.api_client.order(side='SELL', order_type=1, volume=current_base_coin_balance * current_loop_fund_percetage / my_price,
+            buy_order_ret = self.api_client.order(side='BUY', order_type=1,
+                                                  volume=current_base_coin_balance * current_loop_fund_percetage / my_price,
                                                   capital_password=self.capital_password, price=my_price,
                                                   symbol=self.trade_pair)
+
+            sell_order_ret = self.api_client.order(side='SELL', order_type=1,
+                                                   volume=current_base_coin_balance * current_loop_fund_percetage / my_price,
+                                                   capital_password=self.capital_password, price=my_price,
+                                                   symbol=self.trade_pair)
 
             if not (buy_order_ret['code'] == '0' and sell_order_ret['code'] == '0'):
                 # fail one or two
@@ -176,20 +181,21 @@ class Bots:
                 sell_order_id = sell_order_ret['data']['order_id']
 
             # check remain orders
-            current_open_orders = self.api_client.get_order_trade(self.trade_pair, 1, 10)
+            current_open_orders = self.api_client.get_order_trade(self.trade_pair, 1, 20)
             if current_open_orders['count'] > 0:
                 remain_open_orders = current_open_orders['list']
                 for open_order in remain_open_orders:
                     order_id = open_order['id']
                     assert order_id in [buy_order_id, sell_order_id]
                     trade_side = 'BUY' if order_id == sell_order_id else 'SELL'
-                    record_obj = {'side': trade_side,
-                                  'base': self.base_coin,
-                                  'target': self.target_coin,
-                                  'price': my_price,
-                                  'volume': current_loop_fund,
-                                  'ts': int(time.time())
-                                  }
+                    record_obj = {
+                        'side': trade_side,
+                        'base': self.base_coin,
+                        'target': self.target_coin,
+                        'price': my_price,
+                        'volume': current_loop_fund,
+                        'ts': int(time.time())
+                    }
                     self.record_order(record_obj)
                     self.api_client.cancel_order(order_id=open_order['id'], symbol=self.trade_pair)
 
