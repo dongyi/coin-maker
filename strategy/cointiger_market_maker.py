@@ -2,8 +2,10 @@ import random
 import time
 import numpy as np
 import pandas as pd
+import datetime
 
 from lib.persist import get_db_engine
+from lib.persist import sql_to_df
 from lib.util import *
 from exchange.cointiger import CoinTiger
 
@@ -41,13 +43,12 @@ class Bots:
     def get_status(self):
         return self.status
 
-    def test(self, test_type='order_history'):
+    def test(self, test_type='order_and_cancel'):
         if test_type == 'order_and_cancel':
             order_id = self.api_client.order(side='BUY', order_type=1, volume=0.1,
                                              capital_password=self.capital_password, price=0.01,
                                              symbol=self.trade_pair)
             print(order_id)
-            time.sleep(20)
 
             self.api_client.cancel_order(order_id, self.trade_pair)
             print(self.api_client.get_order_trade(self.trade_pair, offset=1, limit=10))
@@ -72,7 +73,14 @@ class Bots:
         if test_type == 'order_history':
             self.sync_trade_history()
 
+        if test_type == 'get_order_history':
+            res = self.api_client.get_order_history('eoseth', 1, 20)
+            print(res)
+
     def sync_trade_history(self):
+
+        current_max_order_id = sql_to_df('select max(order_id) from trade_record where trader_id={}'.format(self.trader_id)).iloc[0, 0]
+
         batch_limit = 10
         offset = 1
         df = pd.DataFrame([])
@@ -83,10 +91,17 @@ class Bots:
             df = df.append(pd.DataFrame(trade_history['list']))
             offset += batch_limit
         for to_fix in ['deal_price', 'price', 'volume']:
-            df[to_fix] = df[to_fix].apply(lambda x: json.loads(x)['amount'])
+            df[to_fix] = df[to_fix].apply(lambda x: x['amount'])
         df['trader_id'] = self.trader_id
-        df.to_csv('trade_history.csv')
-        df.to_sql('trade_record', con=get_db_engine(''), if_exists='append', index=False)
+        df['base_coin'] = self.base_coin
+        df['target_coin'] = self.target_coin
+        df.rename(columns={"created_at": "timestamp", "id": "order_id"}, inplace=True)
+        df['timestamp'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(x/1000))
+
+        df = df[df['order_id'] > current_max_order_id]
+        if len(df) > 0:
+            df.to_csv('trade_history.csv')
+            df.to_sql('trade_record', con=get_db_engine(), if_exists='append', index=False)
 
     def notify(self, msg):
         pass
