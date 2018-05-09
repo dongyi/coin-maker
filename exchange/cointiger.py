@@ -181,7 +181,7 @@ class CoinTiger:
         :return:
         """
         req_entry = MARKET_URL + '/depth'
-        options = {'symbol': market, 'type': 'step1'}
+        options = {'symbol': market, 'type': 'step0'}
         ret = self.get(req_entry, options)
         assert ret['code'] == '0', ret
         return ret['data']
@@ -207,6 +207,7 @@ class CoinTiger:
             'price': price,
             'symbol': symbol
         }
+        print("open order:", options)
         ret = self.post(req_entry, options)
         return ret
 

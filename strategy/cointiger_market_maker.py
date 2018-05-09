@@ -107,6 +107,7 @@ class Bots:
         pass
 
     def record_order(self, content_obj):
+        wait = input("wait")
         print("record order:", content_obj)
 
     def run(self):
@@ -160,25 +161,31 @@ class Bots:
                                                    capital_password=self.capital_password, price=my_price,
                                                    symbol=self.trade_pair)
 
+            time.sleep(1)
+
             if not (buy_order_ret['code'] == '0' and sell_order_ret['code'] == '0'):
                 # fail one or two
                 if buy_order_ret['code'] == '0' and sell_order_ret['code'] != '0':
+                    print("sell order remains")
                     buy_order_id = buy_order_ret['data']['order_id']
                     self.api_client.cancel_order(buy_order_id, self.trade_pair)
                     time.sleep(sleep_interval)
                     continue
                 if buy_order_ret['code'] != '0' and sell_order_ret['code'] == '0':
+                    print("buy order remains")
                     sell_order_id = sell_order_ret['data']['order_id']
                     self.api_client.cancel_order(sell_order_id, self.trade_pair)
                     time.sleep(sleep_interval)
                     continue
                 else:
                     # fail both
+                    print("both order failed")
                     time.sleep(sleep_interval)
                     continue
             else:
                 buy_order_id = buy_order_ret['data']['order_id']
                 sell_order_id = sell_order_ret['data']['order_id']
+                print("buy order: {} sell order: {}".format(buy_order_id, sell_order_id))
 
             # check remain orders
             current_open_orders = self.api_client.get_order_trade(self.trade_pair, 1, 20)
@@ -200,4 +207,5 @@ class Bots:
                     self.api_client.cancel_order(order_id=open_order['id'], symbol=self.trade_pair)
 
             # sleep till next loop
+            print("next loop in ", sleep_interval)
             time.sleep(sleep_interval)
