@@ -138,6 +138,12 @@ def cointiger_market_maker():
     bot.strategy_ctrl('start')
 
 
+@click.command()
+def show_bitmex():
+    from strategy.show_btc_future import run
+    run()
+
+
 cli.add_command(collect_trades)
 cli.add_command(analyse_volatilty)
 cli.add_command(watch_indicator)
@@ -147,6 +153,7 @@ cli.add_command(watch_laplace_indicator)
 cli.add_command(market_maker)
 cli.add_command(custom_strategy)
 cli.add_command(cointiger_market_maker)
+cli.add_command(show_bitmex)
 
 
 if __name__ == "__main__":
