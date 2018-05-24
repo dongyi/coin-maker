@@ -134,7 +134,14 @@ def cointiger_market_maker():
     from strategy.cointiger_market_maker import Bots
     #run()
     capital_password = input('capital_password ==>\n')
-    Bots(base_coin='eth', target_coin='eos', capital_password=capital_password, trader_id=1).test()
+    bot = Bots(base_coin='eth', target_coin='eos', capital_password=capital_password, trader_id=1)
+    bot.strategy_ctrl('start')
+
+
+@click.command()
+def show_bitmex():
+    from strategy.show_btc_future import run
+    run()
 
 
 cli.add_command(collect_trades)
@@ -146,6 +153,7 @@ cli.add_command(watch_laplace_indicator)
 cli.add_command(market_maker)
 cli.add_command(custom_strategy)
 cli.add_command(cointiger_market_maker)
+cli.add_command(show_bitmex)
 
 
 if __name__ == "__main__":
