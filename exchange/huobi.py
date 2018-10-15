@@ -7,6 +7,10 @@ import requests
 import urllib
 import urllib.parse
 
+
+# doc: https://github.com/huobiapi/API_Docs/wiki
+
+
 # timeout in 5 seconds:
 TIMEOUT = 5
 
