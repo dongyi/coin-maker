@@ -17,6 +17,9 @@ class Watcher:
     def __init__(self):
         self.api_client = ExchangeAPI(API_KEY, API_SECRET)
         self.trading_pairs = self.api_client.get_all_trading_pairs()
+        # group by btc/eth/usdt
+        # special pair: btc/usdt, eth/usdt, btc/eth
+        self.asset_list = []
 
     def single_loop(self):
         # find out all trading pairs
