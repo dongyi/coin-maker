@@ -15,11 +15,11 @@ PyJWT==1.5.3
 PyMySQL==0.8.1
 python-dateutil==2.6.0
 pytz==2017.2
-requests==2.18.4
+requests==2.20.0
 six==1.11.0
 SQLAlchemy==1.2.7
 TA-Lib==0.4.17
-urllib3==1.22
+urllib3==1.23
 websocket==0.2.1
 bitmex-ws
 cryptography ~> 2.3
