@@ -1,5 +1,8 @@
 # crypto quant
 
+[![codebeat badge](https://codebeat.co/badges/3f709e50-2df2-41fb-b78b-3ee60d61452a)](https://codebeat.co/projects/github-com-dongyi-coin-maker-master)
+
+
 <a href="https://996.icu"><img src="https://img.shields.io/badge/link-996.icu-red.svg" alt="996.icu" /></a>
 
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
