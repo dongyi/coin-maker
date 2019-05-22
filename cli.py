@@ -10,7 +10,6 @@ except ImportError as e:
 from exchange.bittrex import Bittrex
 
 import script.collect_trades
-
 import datetime
 
 
